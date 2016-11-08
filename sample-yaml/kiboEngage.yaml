@@ -15,21 +15,21 @@ info:
 
     ## Basic Usage
     All KiboEngage API requests start with `https://api.kibosupport.com/api/`
-    
+
     The next segment of the URI path depends on the type of request. For example:
-    
+
     `https://api.kibosupport.com/api/users/allagents`
-    
+
     to get all agents data of a particular company.
-    
+
     ## Authentication
     Each client will be given `kibo-app-id`, `kibo-app-secret` and `kibo-client-id`. Each KiboEngage client company will be give a company id by default. Company id is same as `kibo-client-id`. If a company wants to use this API, then it will enable the API in Company Settings and get `kibo-app-id` and `kibo-app-secret`.
-    
+
     All these needs to be attached to the request headers to use the API. In the next version of the API, client applications will just need to authenticate once and get auth token. For the basic version, we need to attach these credentials in request headers each time we call API endpoints.
-    
+
     ## Error Handling
     Errors are returned using standard HTTP error code syntax. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error (bad or missing parameters, not authenticated etc.), and codes in the 5xx range indicate an error with KiboSupport’s servers. Any additional info is included in the body of the return call, JSON-formatted.
-    
+
     ## Cross-Domain
     All cross-domain API requests made by a web browser are denied for security reasons. It means that browser-based requests are not allowed from 3rd party domains including localhost.
     All API calls include an API key that could be easily stolen when making a request using a web browser. It means you should use backend languages for API.
@@ -75,7 +75,7 @@ info:
     #### DATA
     The data key is the meat of the response. It may be a list or dictionary,
     but either way this is where you'll find the data you requested.
-    
+
     ### JSONP (under construction, will be released in next version of API)
     If you're writing an AJAX application, and you'd like to wrap our response
     with a callback, all you have to do is specify a callback parameter with
@@ -534,7 +534,215 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Media'
+################################
+/users/{user-id}/follows:
+  parameters:
+    - $ref: '#/parameters/user-id'
+  get:
+    tags:
+      - Relationships
+    description: Get the list of users this user follows.
+    responses:
+      200:
+        description: OK
+        schema:
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/MiniProfile'
 
+/users/{user-id}/followed-by:
+  parameters:
+    - $ref: '#/parameters/user-id'
+  get:
+    tags:
+      - Relationships
+    description: Get the list of users this user is followed by.
+    responses:
+      200:
+        description: OK
+        schema:
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/MiniProfile'
+
+/users/self/requested-by:
+  get:
+    tags:
+      - Relationships
+    description: |
+      List the users who have requested this user's permission to follow.
+    responses:
+      200:
+        description: OK
+        schema:
+          properties:
+            meta:
+              properties:
+                code:
+                  type: integer
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/MiniProfile'
+
+/users/{user-id}/relationship:
+  parameters:
+    - $ref: '#/parameters/user-id'
+  post:
+    tags:
+      - Relationships
+    description: |
+      Modify the relationship between the current user and thetarget user.
+    security:
+      - oauth:
+        - relationships
+    parameters:
+      - name: action
+        in: body
+        description: One of follow/unfollow/block/unblock/approve/ignore.
+        schema:
+          type: string
+          enum:
+            - follow
+            - unfollow
+            - block
+            - unblock
+            - approve
+
+    responses:
+      200:
+        description: OK
+        schema:
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/MiniProfile'
+
+/media/{media-id}:
+  parameters:
+    - name: media-id
+      in: path
+      description: The media ID
+      type: integer
+      required: true
+  get:
+    tags:
+      - Media
+    description: |
+      Get information about a media object.
+      The returned type key will allow you to differentiate between `image`
+      and `video` media.
+
+      Note: if you authenticate with an OAuth Token, you will receive the
+      `user_has_liked` key which quickly tells you whether the current user
+      has liked this media item.
+    responses:
+      200:
+        description: OK
+        schema:
+          $ref: '#/definitions/Media'
+
+/media1/{shortcode}: #FIXME: correct path is /media/{shortcode}
+  parameters:
+    - name: shortcode
+      in: path
+      description: The media shortcode
+      type: string
+      required: true
+  get:
+    tags:
+      - Media
+    description: |
+      This endpoint returns the same response as **GET** `/media/media-id`.
+
+      A media object's shortcode can be found in its shortlink URL.
+      An example shortlink is `http://instagram.com/p/D/`
+      Its corresponding shortcode is D.
+
+    responses:
+      200:
+        description: OK
+        schema:
+          $ref: '#/definitions/Media'
+
+/media/search:
+  get:
+    tags:
+      - Media
+    description: |
+      Search for media in a given area. The default time span is set to 5
+      days. The time span must not exceed 7 days. Defaults time stamps cover
+      the last 5 days. Can return mix of image and video types.
+
+    parameters:
+      - name: LAT
+        description: |
+          Latitude of the center search coordinate. If used, lng is required.
+        type: number
+        in: query
+      - name: MIN_TIMESTAMP
+        description: |
+          A unix timestamp. All media returned will be taken later than
+          this timestamp.
+        type: integer
+        in: query
+      - name: LNG
+        description: |
+          Longitude of the center search coordinate. If used, lat is required.
+        type: number
+        in: query
+      - name: MAX_TIMESTAMP
+        description: |
+          A unix timestamp. All media returned will be taken earlier than this
+          timestamp.
+        type: integer
+        in: query
+      - name: DISTANCE
+        description:  Default is 1km (distance=1000), max distance is 5km.
+        type: integer
+        maximum: 5000
+        default: 1000
+        in: query
+    responses:
+      200:
+        description: OK
+        schema:
+          type: object
+          description: List of all media with added `distance` property
+          properties:
+            data:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/definitions/Media'
+                  -
+                    properties:
+                      distance:
+                        type: number
+
+/media/popular:
+  get:
+    tags:
+      - Media
+    description: |
+      Get a list of what media is most popular at the moment.
+      Can return mix of image and video types.
+    responses:
+      200:
+        description: OK
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/Media'
+################################
   /media/{media-id}/comments:
     parameters:
       - name: media-id
@@ -1218,7 +1426,7 @@ definitions:
         description: The channels are not hard deleted from the system when admin deletes them. This shows if this channel is deleted or not. Possible values are “Yes” and “No”
   Shortcut:
     type: object
-    description: Support agents are on a typing spree when they are answering large number of customers and typing same thing over and over may bore them and reduce their productivity. To keep things up and up for your agents and maintain their pace, you can create well-formatted - predetermined responses for commonly asked questions. 
+    description: Support agents are on a typing spree when they are answering large number of customers and typing same thing over and over may bore them and reduce their productivity. To keep things up and up for your agents and maintain their pace, you can create well-formatted - predetermined responses for commonly asked questions.
     properties:
       _id:
         type: string
