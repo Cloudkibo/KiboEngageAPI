@@ -1,0 +1,268 @@
+.pagcontent
+  .pagcontent
+    style.
+        .chatMessage{
+          background-color:#fff ;
+          border : none;
+        }
+        .chatBox{
+          border :none;
+        }
+        .chatSeparator{
+          border-bottom: 1px solid #c8c8c8;
+          line-height: 5px;
+          margin-bottom: 15px;
+        }
+
+        .chatMessageForm input.form-control{
+          border-radius: 10px !important;
+          font-size: 14px;
+          color: #393939;
+          -moz-border-radius: 10px;
+          -webkit-border-radius: 10px;
+          -khtml-border-radius: 10px;
+          border-radius: 10px !important;
+          padding: 12px 14px;
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          -webkit-box-sizing: border-box;
+        }
+        .chat-timestamp {
+          font-size: 11px;
+          color: #868686;
+          line-height: 17px;
+          opacity: .5;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+        filter: alpha(opacity=50);
+        float:right;
+        }
+        .chat-uname {
+        margin-bottom: 8px;
+          font-size: 14px;
+          color: #41AAD3;
+          font-family: sans-serif;
+          font-weight: 600;
+        }
+        .chat-picture {
+        width: 17px;
+          height: 17px;
+          margin-right: 10px;
+          -moz-border-radius: 3px;
+          -webkit-border-radius: 3px;
+          -khtml-border-radius: 3px;
+          border-radius: 3px !important;
+          float:left;
+          line-height: 1px;
+          font-size: 9px;
+          background-color: #3A94B5;
+        }
+        .chat-messages-holder {
+          overflow-y: auto;
+          height: 100%;
+        }
+        .chat-messages-container {
+          margin-bottom: 100px;
+          word-wrap: break-word;
+        }
+        #chat-form {
+          position: absolute;
+          left: 1px;
+          right: 30px;
+          bottom: 0px;
+          background-color: white;
+          padding: 15px 0 20px 0;
+          border-bottom: 1px solid #C8C8C8;
+        }
+        .chat-picture .initials
+        {
+        vertical-align: middle;
+        color: white;
+        text-align: center;
+        line-height: 1px;
+          font-weight: bold;
+          display: table-cell;
+          height: 17px;
+          width: 17px;
+        }
+        .body-copy-3 {
+          font-size: 14px;
+          color: #393939;
+          margin-bottom : -20px;
+        }
+        .body-copy-3 pre{
+          background-color: transparent;
+          border: 0px;
+          font-size: 14px;
+          color: #393939;
+          font-family:sans-serif
+        }
+    div(class='white-content', ng-hide='isWebRTC()')
+      center
+        b Only chat is allowed due to unsupported browser. For audio/video call use Chrome or FireFox.
+    div(class='white-content')
+      center
+        h3 Welcome to Live Help
+
+    div(class='white-content', ng-show="isThisAgent()")
+      div(class="chatWrapper",ng-show='readyForChat()')
+        div(class="mainPane")
+          div(class="chatContainer")
+            div(class="leftPane")
+              div
+              div(class="infoPane")
+                | Name:
+                | {{visitorname}}
+              div(class="infoPane")
+                | Email Address:
+                | {{visitoremail}}
+              div(class="infoPane")
+                | Location:
+                | {{location}}
+              div(class="infoPane")
+                | IP Address:
+                | {{ipAddress}}
+              div(class="infoPane")
+                | Current Page:
+                | {{currentPage}}
+
+              //div(class="infoPane")
+                | Call Request Time:
+
+
+
+            div(class="rightPane")
+              .chatControls
+                .chatBox(schroll-bottom='messages')
+                  div(ng-repeat='message in messages track by $index')
+                    .chatMessage
+                      div(class = "chatSeparator",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) || $index ==0")
+                      div(class = "chat-timestamp",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                        | {{message.timemsg | date:'hh:mm a'}}
+
+                      div(class = "chat-picture",style = "background-color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                          div(class = "initials")
+                            | {{message.displayname | limitTo : 1}}
+                      div(class = "chat-uname",style = "color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                          | {{message.displayname}}
+                      div(class = "body-copy-3")
+                          pre {{message.msg}}
+                .chatControlls
+                  form(class='chatMessageForm', role='form', ng-submit='sendIM()')
+                    //ng-if='hasSharedDetails()'
+                    //http://stackoverflow.com/questions/6014702/how-do-i-detect-shiftenter-and-generate-a-new-line-in-textarea
+                    input.form-control(type='text', ng-model='im.msg', placeholder='Send a message')
+            div(class='bottomPane')
+              button.btn.green-meadow(ng-show='hasClientWebRTCBrowser()', type='button', ng-click='connectToCall()') Start Call
+
+
+    div(ng-hide="isThisAgent()", class='white-content')
+      div(class="chatWrapper",ng-show='readyForChat()')
+        div(class="mainPaneVisitor")
+          div(class="chatContainerVisitor")
+            div()
+              .chatControlsVisitor
+                .chatBoxVisitor(schroll-bottom='messages')
+                      div(ng-repeat='message in messages track by $index')
+                        .chatMessage
+                          div(class = "chatSeparator",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) || $index ==0")
+                          div(class = "chat-timestamp",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                            | {{message.timemsg | date:'hh:mm a'}}
+                          div(class = "chat-picture",style = "background-color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                            div(class = "initials")
+                              | {{message.displayname | limitTo : 1}}
+                          div(class = "chat-uname",style = "color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                            | {{message.displayname}}
+                          div(class = "body-copy-3")
+                            pre {{message.msg}}
+                .chatControllsVisitor
+                  form(class='chatMessageForm', role='form', ng-submit='sendIM()')
+                    //ng-if='hasSharedDetails()'
+                    //http://stackoverflow.com/questions/6014702/how-do-i-detect-shiftenter-and-generate-a-new-line-in-textarea
+                    input.form-control(type='text', ng-model='im.msg', placeholder='Send a message')
+            div(class='bottomPaneVisitor')
+              button.btn.green-meadow(ng-show='isWebRTC()', type='button', ng-click='connectToCall()') Start Call
+
+    div(ng-show='!hasStarted() && !hasFailed() && !readyForChat()')
+        //!hasStarted() && !hasFailed()')
+        form(role='form', novalidate, name='form', class='css-form', ng-submit='joinRoom()')
+          .form-group
+            label Name *
+            .input-group
+              input.form-control(type='text', placeholder='', ng-model='visitor.name', required, ng-minlength='2', ng-maxlength='25', ng-focus, name='name')
+              div(ng-show!="form.name.$dirty && !form.name.$focused")
+                div(ng-show="form.name.$invalid")
+                  span(ng-show="form.name.$error.required")
+                    | Enter the first name.
+                  span(ng-show="form.name.$error.minlength")
+                    | First name is too short.
+                  span(ng-show="form.name.$error.maxlength")
+                    | First name is too big.
+          //br
+          .form-group
+            label Email *
+            .input-group
+              input.form-control(type='email', placeholder='', ng-model='visitor.email', name='email', required, ng-focus)
+              div(ng-show="form.email.$dirty && !form.email.$focused")
+                div(ng-show="form.email.$invalid")
+                  span(ng-show="form.email.$error.required")
+                    | Enter your email address.
+                  span(ng-show="form.email.$error.email")
+                    | This is not a valid email address.
+          //br
+          .form-group
+            label Phone
+            .input-group
+              input.form-control(type='text', placeholder='', ng-model='visitor.phone')
+          //br
+          span(ng-if='departments.length!=0')
+            .form-group
+              label Group *
+              .input-group
+                select.form-control(name="departmentSelect", ng-model='option.departmentOption' ,required, ng-focus)
+                  option(value='{{department._id}}', ng-repeat = 'department in departments | orderBy : "deptname" ') {{department.deptname}}
+                div(ng-show="form.departmentSelect.$dirty && !form.departmentSelect.$focused")
+                  div(ng-show="form.departmentSelect.$invalid")
+                    span(ng-show="form.departmentSelect.$error.required")
+                      | Please specify the group.
+          //br
+          .form-group
+            label Question or Issue *
+            .input-group
+              textarea.form-control(rows=4, cols=75, type='text', placeholder='', ng-model='visitor.question', name='question', required, ng-focus)
+              div(ng-show="form.question.$dirty && !form.question.$focused")
+                div(ng-show="form.question.$invalid")
+                  span(ng-show="form.question.$error.required")
+                    | Enter your question here.
+          //br
+          //br
+          //button.btn.green-meadow(type='button') Green Meadow
+          button.btn.btn-account.btn-send(id='joinButton', type='submit') Join Live Help Session
+          //br
+          br
+          div(style='text-align: right;')
+            small powered by
+              a(href='https://api.kibosupport.com') KiboSupport
+    div(ng-show='hasStarted() && !readyForChat()')
+        br
+        h4 Waiting for the Support Agent to pick your call
+        br
+        br
+        center
+          a(class='btn btn-color', ng-href='', ng-click='cancelRequest()') Cancel the Request
+        br
+        br
+        br
+        br
+        div(style='text-align: right;')
+          small powered by
+            a(href='https://api.kibosupport.com') KiboSupport
+    div(ng-show='hasFailed()')
+        br
+        br
+        h4 We are offline for now. We have received your issue and will contact you soon. :)
+        br
+        br
+        br
+        div(style='text-align: right;')
+          small powered by
+            a(href='https://api.kibosupport.com') KiboSupport

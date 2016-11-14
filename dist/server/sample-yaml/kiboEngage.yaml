@@ -1,0 +1,519 @@
+---
+swagger: '2.0'
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info:
+  version: v1
+  title: KiboEngage API
+  description: |
+    Welcome to the KiboEngage API documentation! Our API provides flexible tools that can be used in the creation of new, outstanding projects.
+    Please note that this documentation refers to the API 1.0 version. API 2.0 version is currently under construction and will be released soon.
+
+    Build something great!
+
+    ## Basic Usage
+    All KiboEngage API requests start with `https://api.kibosupport.com/api/`
+
+    The next segment of the URI path depends on the type of request. For example:
+
+    `https://api.kibosupport.com/api/users/allagents`
+
+    to get all agents data of a particular company.
+
+    ## Authentication
+    Each client will be given `kibo-app-id`, `kibo-app-secret` and `kibo-client-id`. Each KiboEngage client company will be give a company id by default. Company id is same as `kibo-client-id`. If a company wants to use this API, then it will enable the API in Company Settings and get `kibo-app-id` and `kibo-app-secret`.
+
+    All these needs to be attached to the request headers to use the API. In the next version of the API, client applications will just need to authenticate once and get auth token. For the basic version, we need to attach these credentials in request headers each time we call API endpoints.
+
+    ## Error Handling
+    Errors are returned using standard HTTP error code syntax. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error (bad or missing parameters, not authenticated etc.), and codes in the 5xx range indicate an error with KiboSupport’s servers. Any additional info is included in the body of the return call, JSON-formatted.
+
+    ## Cross-Domain
+    All cross-domain API requests made by a web browser are denied for security reasons. It means that browser-based requests are not allowed from 3rd party domains including localhost.
+    All API calls include an API key that could be easily stolen when making a request using a web browser. It means you should use backend languages for API.
+
+    ## Limits (under construction on API side)
+    Be nice. If you're sending too many requests too quickly, we'll send back a
+    `503` error code (server unavailable).
+    You are limited to 5000 requests per hour per `access_token` or `client_id`
+    overall. Practically, this means you should (when possible) authenticate
+    users so that limits are well outside the reach of a given user.
+
+    ## Structure
+
+    ### JSONP (under construction, will be released in next version of API)
+    If you're writing an AJAX application, and you'd like to wrap our response
+    with a callback, all you have to do is specify a callback parameter with
+    any API call:
+    ```
+    https://api.cloudkibo.com/v1/companyprofile?access_token=fb2e77d.47a0479900504cb3ab4a1f626d174d2d&callback=callbackFunction
+    ```
+    Would respond with:
+    ```js
+    callbackFunction({
+        ...
+    });
+    ```
+  termsOfService: http://www.kibosupport.com/documentation
+
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+host: api.kibosupport.com
+#basePath: /v1
+schemes:
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+
+################################################################################
+#                                   Tags                                       #
+################################################################################
+#tags:
+#  - name: Users
+#  - name: Relationships
+#    description: |
+#      Relationships are expressed using the following terms:
+#
+#      **outgoing_status**: Your relationship to the user. Can be "follows",
+#        "requested", "none".
+#      **incoming_status**: A user's relationship to you. Can be "followed_by",
+#        "requested_by", "blocked_by_you", "none".
+#  - name: Media
+#    description: |
+#      At this time, uploading via the API is not possible. We made a conscious
+#      choice not to add this for the following reasons:
+#
+#      * Instagram is about your life on the go – we hope to encourage photos
+#        from within the app.
+#      * We want to fight spam & low quality photos. Once we allow uploading
+#        from other sources, it's harder to control what comes into the Instagram
+#        ecosystem. All this being said, we're working on ways to ensure users
+#        have a consistent and high-quality experience on our platform.
+#  - name: Commnts
+#  - name: Likes
+#  - name: Tags
+#  - name: Location
+#  - name: Subscribtions
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+
+  /geographies/{geo-id}/media/recent:
+    parameters:
+      - name: geo-id
+        in: path
+        description: Geolocation ID
+        type: integer
+        required: true
+    get:
+      description: |
+        Get recent media from a geography subscription that you created.
+        **Note**: You can only access Geographies that were explicitly created
+        by your OAuth client. Check the Geography Subscriptions section of the
+        [real-time updates page](https://instagram.com/developer/realtime/).
+        When you create a subscription to some geography
+        that you define, you will be returned a unique geo-id that can be used
+        in this query. To backfill photos from the location covered by this
+        geography, use the [media search endpoint
+        ](https://instagram.com/developer/endpoints/media/).
+      parameters:
+        - name: count
+          in: query
+          description: Max number of media to return.
+          type: integer
+        - name: min_id
+          in: query
+          description: Return media before this `min_id`.
+          type: integer
+      responses:
+        200:
+          description: OK
+
+################################################################################
+#                                 Definitions                                  #
+################################################################################
+definitions:
+  User:
+    description: Admins, supervisors and agents
+    type: object
+    properties:
+      _id:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      country:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      isAgent:
+        type: string
+        description: Shows if the user is agent. Possible values are “Yes” and “No”
+      isAdmin:
+        type: string
+        description: Shows if the user is admin. Possible values are “Yes” and “No”
+      isSupervisor:
+        type: string
+        description: Shows if the user is supervisor. Possible values are “Yes” and “No”
+      website:
+        type: string
+        description: The website is the domain name of the company registered. User might be admin, supervisor or agent in the company.
+      companyName:
+        type: string
+      uniqueid:
+        type: string
+        description: Unique id of the company. This is used to uniquely identify the company. This is used on widget to know if the widget on the website is registered or not.
+      picture:
+        type: string
+      accountVerified:
+        type: string
+      date:
+        type: string
+        format: date-time
+      isDeleted:
+        type: string
+        description: The accounts are not hard deleted from the system when admin deletes any agent or supervisor. This shows if this account is deleted or not. Possible values are “Yes” and “No”
+      canIncludeAgent:
+        type: string
+        description: Shows if the supervisor can add agent to any group. Possible values are “Yes” and “No”
+      canExcludeAgent:
+        type: string
+        description: Shows if the supervisor can remove agent from any group. Possible values are “Yes” and “No”
+      abandonedemail1:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      abandonedemail2:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      abandonedemail3:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      completedemail1:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      completedemail2:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      completedemail3:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      invitedemail1:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to invite a visitor to a call.
+      invitedemail2:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to invite a visitor to a call.
+      invitedemail3:
+        type: string
+        description: Every agent can have the sample email to send to visitor if there is a need to invite a visitor to a call.
+      allownotification:
+        type: string
+        description: Shows if the user wants desktop notifications on visitor calls or not. Possible values are “Yes” and “No”
+      allchime:
+        type: string
+        description: Shows if the user wants to chime on visitor calls or not. Possible values are “Yes” and “No”
+      #count:
+      #  type: object
+      #  properties:
+      #    media:
+      #      type: integer
+      #    follows:
+      #      type: integer
+      #    follwed_by:
+      #      type: integer
+  VisitorCalls:
+    type: object
+    description: Use this end-point to get information about all the visitor calls started on a company’s website. Complete information of visitor calls is given, i.e. who picked the call, what was the time, when the call was ended etc.
+    properties:
+      _id:
+        description: Unique id of the visitor call
+        type: string
+      username:
+        type: string
+        description: Name of the visitor
+      useremail:
+        type: string
+        description: Email address of the visitor
+      phone:
+        type: string
+        description: Phone number of the visitor
+      country:
+        type: string
+        description: Country of the visitor
+      question:
+        type: string
+        description: Question that visitor asked
+      currentPage:
+        type: string
+        description: Page title of your website on which visitor was before clicking Live Help button
+      departmentid:
+        type: string
+        description: Department / Group id in which visitor has question (i.e. Sales)
+      fullurl:
+        type: string
+        description: Full URL of the web page on which visitor was before clicking Live Help button
+        #properties:
+        #  count:
+        #    type: integer
+        #  data:
+        #    type: array
+        #    items:
+        #      $ref: '#/definitions/Comment'
+      browser:
+        type: string
+        description: Browser of the visitor
+      ipAddress:
+        type: string
+        description: IP address of the visitor
+      room:
+        type: string
+        description: This is the unique id of your company
+      agentname:
+        type: string
+        description: Name of the agent who picked the call
+      agentemail:
+        type: string
+        description: Email address of the agent who picked the call
+      status:
+        type: string
+        description: Current status of the visitor call. Possible values are “waiting”, “progress”, “abandoned” and “completed”
+      initiator:
+        type: string
+        description: Shows if the visitor was invited by agent or visitor came to call by pressing live button and filling the form on widget. Possible values are “visitor” and “agent”
+      requesttime:
+        type: string
+        format: date-time
+        description: Time on which visitor requested the call
+      picktime:
+        type: string
+        format: date-time
+        description: Time on which visitor’s call was picked by any agent
+      endtime:
+        type: string
+        format: date-time
+        description: Time on which call between visitor and agent was ended. Agent is responsible to close the call by pressing Complete Call on website.
+      request_id:
+        type: string
+        description: This is the unique id given to the visitor call. This id is used in userchat table to track which chat message belong to which visitor call
+      callsummary:
+        type: string
+        description: Agent can give the call summary at the end of each call
+      calldescription:
+        type: string
+        description: Agent can give the call detailed description to define the issue of visitor
+      callresolution:
+        type: string
+        description: Agent can give the resolution summary to define how the issue of visitor was resolved
+      webrtc_browser:
+        type: string
+        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboSupport leverages this technology)
+  UserChat:
+    type: object
+    properties:
+      _id:
+        type: string
+      to:
+        type: string
+        description: Name of the receiver
+      from:
+        type: string
+        description: Name of sender
+      agentemail:
+        type: string
+        description: Email address of the agent who picked the call
+      visitoremail:
+        type: string
+        description: Email address of the visitor
+      msg:
+        type: string
+        description: Chat Message
+      datetime:
+        type: string
+        format: date-time
+        description: Date and time of chat message
+      request_id:
+        type: string
+        description: Unique id of the visitor call for which chat messages were stored
+      companyid:
+        type: string
+        description: Unique id of the company in which chat was done between agent and visitor
+  CompanyProfile:
+    type: object
+    description: Use this integration to get and modifiy the profile and settings of the company.
+    properties:
+      _id:
+        type: string
+      companyid:
+        type: string
+        description: Unique id of the company
+      allowchat:
+        type: string
+        description: Check if the admin wants to allow text chat between agent and visitor. Possible values are “Yes” and “No”
+      isdomainemail:
+        type: string
+        description: Check if the admin wants to invite only those agents who have email address of company domain. Possible values are “Yes” and “No”
+      allowCompletingOfCalls:
+        type: string
+        description: Check if the admin wants system to automatically close call between agent and visitor (mark the call complete in case agent forgot to close it manually). Possible values are “Yes” and “No”
+      completeCallTime:
+        type: string
+        description: Time duration for system to close the call after specified time (beta)
+      allowsmsnotification:
+        type: string
+        description: Check if the admin wants system to send sms if there was a visitor and no agent was online to pick the call. Possible values are “Yes” and “No”
+      smsphonenumber:
+        type: string
+        description: Phone number to get sms notifications
+      allowemailnotification:
+        type: string
+        description: Check if the admin wants system to send email if there was a visitor and no agent was online to pick the call. Possible values are “Yes” and “No”
+      notificationemailaddress:
+        type: string
+        description: Email address to get email notification
+      maxnumberofdepartment:
+        type: string
+        description: Maximum number of departments / groups a company can have. This number cannot exceed the threshold set by system
+      showsummary:
+        type: string
+        description: Check if the admin wants system open the summary widget for agent to add the summary and details during the call. Possible values are “Yes” and “No”
+      widgetwindowtab:
+        type: string
+        description: Check if the admin wants system to open the widget as separate window or tab. Possible values are “window” and “tab”
+      abandonedemail1:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      abandonedemail2:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      abandonedemail3:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to schedule call with abandoned (missed call) visitor.
+      completedemail1:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      completedemail2:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      completedemail3:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to reschedule call with resolved (completed call) visitor.
+      invitedemail1:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to invite a visitor to a call.
+      invitedemail2:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to invite a visitor to a call.
+      invitedemail3:
+        type: string
+        description: Admin can set the sample email for all agents to send to visitor if there is a need to invite a visitor to a call.
+  Groups:
+    type: object
+    description: Groups are made in company to organize the agents into different categories according to domain. Visitor calls are directed to the agents of the only group to which calls were made.
+    properties:
+      _id:
+        type: string
+      deptname:
+        type: string
+        description: Department Name
+      deptdescription:
+        type: string
+        description: Department Description
+      companyid:
+        type: string
+        description: Unique id of the company
+      createdby:
+        type: string
+        description: Complete profile of the user who created the department
+      creationdate:
+        type: string
+        format: date-time
+        description: Date of creation
+      deleteStatus:
+        type: string
+        description: The departments are not hard deleted from the system when admin deletes them. This shows if this department is deleted or not. Possible values are “Yes” and “No”
+  MessageChannel:
+    type: object
+    description: Message channels are made in company groups to organize the client chats in a group in form of further categories inside groups.
+    properties:
+      msg_channel_name:
+        type: string
+        description: Message Channel Name
+      msg_channel_description:
+        type: string
+        description: Description for message channel
+      companyid:
+        type: string
+        description: Unique id of the company
+      groupid:
+        type: string
+        description: Unique id of the group in which message channel is created
+      createdby:
+        type: string
+        description: Complete profile of the user who created the channel
+      creationdate:
+        type: string
+        format: date-time
+        description: Date of creation
+      deleteStatus:
+        type: string
+        description: The channels are not hard deleted from the system when admin deletes them. This shows if this channel is deleted or not. Possible values are “Yes” and “No”
+  Shortcut:
+    type: object
+    description: Support agents are on a typing spree when they are answering large number of customers and typing same thing over and over may bore them and reduce their productivity. To keep things up and up for your agents and maintain their pace, you can create well-formatted - predetermined responses for commonly asked questions.
+    properties:
+      _id:
+        type: string
+        description: The unique id of the shortcut
+      shortform:
+        type: string
+        description: Short form for message (i.e. idk)
+      fullform:
+        type: string
+        description: Full form for message (i.e. I don’t know)
+      companyid:
+        type: string
+        description: Unique id of the company
+      createdby:
+        type: string
+        description: Complete profile of the user who created the shortcut
+      creationdate:
+        type: string
+        format: date-time
+        description: Date of creation
+  BusinessHours:
+    type: object
+    description: Any company can set its business hours and widget will be activated only during those hours.
+    properties:
+      start_time:
+        type: string
+        description: Start time of business day
+      end_time:
+        type: string
+        description: End time of business day
+      saturday_off:
+        type: string
+        description: Is saturday off day for company
+      sunday_off:
+        type: string
+        description: Is sunday off day for company
+      companyid:
+        type: string
+        description: Unique id of the company

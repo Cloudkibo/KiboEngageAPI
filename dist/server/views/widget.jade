@@ -1,0 +1,81 @@
+doctype html
+html(ng-app='WidgetApp', class="pagcontent")
+  head
+    title KiboSupport Chat
+
+    link(rel='stylesheet', type='text/css', href='https://www.cloudkibo.com/admin_assets/assets/global/plugins/simple-line-icons/simple-line-icons.min.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/global/plugins/bootstrap/css/bootstrap.min.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/global/plugins/uniform/css/uniform.default.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')
+
+    link(rel='stylesheet', type='text/css', href='https://www.cloudkibo.com/admin_assets/assets/global/css/components.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/global/css/plugins.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/admin/layout/css/layout.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/admin/layout/css/themes/darkblue.css')
+
+    link(rel='stylesheet', href='https://www.cloudkibo.com/admin_assets/assets/admin/layout/css/custom.css')
+
+    meta(name='viewport', content='width=device-width, initial-scale=1, minimum-scale=1')
+
+    //if IE
+      style(type='text/css')
+        div#surveyArea { height: 83%;}
+
+    style(type='text/css')
+      html { visibility:hidden; }
+
+
+  body(ng-init='pathname=#{JSON.stringify(pathname)}')
+    div(ng-init='roomname=#{JSON.stringify(roomname)}')
+      div(ng-init='fullurl=#{JSON.stringify(fullurl)}')
+        div(ng-init='ipAddress=#{JSON.stringify(ip)}')
+          div(ng-init='location=#{JSON.stringify(location)}')
+            div(ng-init='departments=#{JSON.stringify(departments)}')
+              div(ng-init='role=#{JSON.stringify(role)}')
+                div(ng-init='agentemail=#{JSON.stringify(agentemail)}')
+                  div(ng-init='agentname=#{JSON.stringify(agentname)}')
+                    div(ng-init='visitorid=#{JSON.stringify(visitorid)}')
+                      div(ng-init='visitorname=#{JSON.stringify(visitorname)}')
+                        div(ng-init='visitoremail=#{JSON.stringify(visitoremail)}')
+                          div(ng-init='requestid=#{JSON.stringify(requestid)}')
+                            div(ng-init='currentPage=#{JSON.stringify(currentPage)}')
+                              div(ng-init='visitorHasWebRTCBrowser=#{JSON.stringify(visitorHasWebRTCBrowser)}')
+                                div(ng-view)
+
+    script(src='bower_components/jquery/dist/jquery.js')
+
+    script(src='bower_components/angular/angular.js')
+
+    script(src='bower_components/angular-route/angular-route.js')
+
+    script(src='bower_components/angular-socket-io/socket.js')
+
+    script(src='socket.io-client/socket.io.js')
+
+    script(type='text/javascript', src='/socket.io/socket.io.js')
+
+    script(src='/javascripts/widgetapp/widgetapp.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/global/plugins/jquery.min.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/global/plugins/jquery-migrate.min.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/global/plugins/bootstrap/js/bootstrap.min.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/global/scripts/metronic.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/admin/layout/scripts/layout.js')
+
+    script(src='https://www.cloudkibo.com/admin_assets/assets/admin/layout/scripts/demo.js')
+
+    script.
+      $(document).ready(function() {
+        Metronic.init(); // Run metronic theme
+        Metronic.setAssetsPath('../../../assets/'); // Set the assets folder path
+      });

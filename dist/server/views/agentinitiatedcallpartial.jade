@@ -1,0 +1,211 @@
+.page-content-wrapper
+  .page-content
+    style.
+      .chatMessage {
+        background-color: #fff;
+        border: none;
+      }
+
+      .chatBox {
+        border: none;
+      }
+
+      .chatSeparator {
+        border-bottom: 1px solid #c8c8c8;
+        line-height: 5px;
+        margin-bottom: 15px;
+      }
+
+      .chatMessageForm input.form-control {
+        border-radius: 10px !important;
+        font-size: 14px;
+        color: #393939;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        border-radius: 10px !important;
+        padding: 12px 14px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+      }
+
+      .chat-timestamp {
+        font-size: 11px;
+        color: #868686;
+        line-height: 17px;
+        opacity: .5;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+        filter: alpha(opacity=50);
+        float: right;
+      }
+
+      .chat-uname {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #41AAD3;
+        font-family: sans-serif;
+        font-weight: 600;
+      }
+
+      .chat-picture {
+        width: 17px;
+        height: 17px;
+        margin-right: 10px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -khtml-border-radius: 3px;
+        border-radius: 3px !important;
+        float: left;
+        line-height: 1px;
+        font-size: 9px;
+        background-color: #3A94B5;
+      }
+
+      .chat-messages-holder {
+        overflow-y: auto;
+        height: 100%;
+      }
+
+      .chat-messages-container {
+        margin-bottom: 100px;
+        word-wrap: break-word;
+      }
+
+      #chat-form {
+        position: absolute;
+        left: 1px;
+        right: 30px;
+        bottom: 0px;
+        background-color: white;
+        padding: 15px 0 20px 0;
+        border-bottom: 1px solid #C8C8C8;
+      }
+
+      .chat-picture .initials {
+        vertical-align: middle;
+        color: white;
+        text-align: center;
+        line-height: 1px;
+        font-weight: bold;
+        display: table-cell;
+        height: 17px;
+        width: 17px;
+      }
+
+      .body-copy-3 {
+        font-size: 14px;
+        color: #393939;
+        margin-bottom: -20px;
+      }
+
+      .body-copy-3 pre {
+        background-color: transparent;
+        border: 0px;
+        font-size: 14px;
+        color: #393939;
+        font-family: sans-serif
+      }
+
+    div(class='white-content price-content')
+      center(ng-hide='readyForChat()')
+        h3 Welcome to schedule call
+        center {{data.agentname}}  has arranged this call for you. You can now have live chat with the agent and solve your problem.
+        h5 Below is your ticket information.
+      div(ng-show='!hasStarted() && !hasFailed() && !readyForChat()')
+        table
+          tbody
+            tr
+              td Name:
+              td {{data.username}}
+            tr
+              td Email:
+              td {{data.useremail}}
+            tr
+              td Current Page:
+              td {{data.currentPage}}
+            tr
+              td Phone:
+              td {{data.phone}}
+            tr
+              td IP Address:
+              td {{data.ipAddress}}
+            tr
+              td Agent Name:
+              td {{data.agentname}}
+            tr
+              td Device:
+              td {{data.browser}}
+            tr
+              td Call Request Time:
+              td {{data.date | date : "medium"}}
+        .bootbox-body &nbsp;
+        .bootbox-body &nbsp;
+          tr
+            td Your Query:
+            td &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp {{data.question}}
+        br
+        br
+        b Waiting for agent to pick the call...
+        br
+        br
+        div(style='text-align: right;')
+          small powered by
+            a(href='https://api.kibosupport.com') KiboSupport
+      div(ng-show='hasStarted() && !readyForChat()')
+        br
+        center Waiting for the Support Agent to pick your call...
+        br
+        br
+        center
+          a(class='btn btn-color', ng-href='', ng-click='cancelRequest()') Cancel the Request
+        br
+        br
+        br
+        br
+        div(style='text-align: right;')
+          small powered by
+            a(href='https://api.kibosupport.com') KiboSupport
+              div(class='white-content')
+      div(class="chatWrapper",ng-show='readyForChat()')
+        div(class="mainPaneVisitor")
+          div(class="chatContainerVisitor")
+            div()
+              .chatControlsVisitor
+                .chatBoxVisitor(schroll-bottom='messages')
+                  div(ng-repeat='message in messages')
+                    .chatMessage
+                        div(class = "chatSeparator",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) || $index ==0")
+                        div(class = "chat-timestamp",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                          | {{message.timemsg | date:'hh:mm a'}}
+                        div(class = "chat-picture",style = "background-color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                            div(class = "initials")
+                              | {{message.displayname | limitTo : 1}}
+                        div(class = "chat-uname",style = "color :{{message.col}} ",ng-hide ="(messages[$index -1].displayname ==  messages[$index].displayname) && $index !=0")
+                          | {{message.displayname}}
+                        div(class = "body-copy-3")
+                          pre {{message.msg}}
+
+                     // .senderInfoInMessage()
+                        //ng-if='message.to == visitor.username')
+                     // b {{message.displayname}}
+                      .messageTextInMessage
+                        | {{message.msg}}
+                .chatControllsVisitor
+                  form(class='chatMessageForm', role='form', ng-submit='sendIM()')
+                    //ng-if='hasSharedDetails()'
+                    //http://stackoverflow.com/questions/6014702/how-do-i-detect-shiftenter-and-generate-a-new-line-in-textarea
+                    input.form-control(type='text', ng-model='im.msg', placeholder='Send a message')
+            div(class='bottomPaneVisitor')
+              button.btn.green-meadow(type='button', ng-click='connectToCall()') Start Call
+    div(ng-show='hasFailed()')
+      br
+      br
+      h4 We are offline for now. We are sorry to make you wait. We have received notification about your arrival and we will contact you soon through email. :)
+      br
+      br
+      br
+      div(style='text-align: right;')
+        small powered by
+          a(href='https://api.kibosupport.com') KiboSupport
+

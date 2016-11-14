@@ -1,0 +1,27 @@
+.page-content-wrapper
+  .page-content
+      div(class='white-content price-content')
+         center
+            h3 Live Help Call Summary
+         div
+           .form-group
+               label Issue Summary
+               .input-group
+                 textarea.form-control(rows=4, cols=75, type='text', placeholder='', ng-model='data.summary', name='question', required, ng-focus)
+           .form-group
+               label Issues Description
+               .input-group
+                 textarea.form-control(rows=4, cols=75, type='text', placeholder='', ng-model='data.description', name='question', required, ng-focus)
+           .form-group
+               label Issue Resolution
+               .input-group
+                 textarea.form-control(rows=4, cols=75, type='text', placeholder='', ng-model='data.resolution', name='question', required, ng-focus)
+
+               br
+               button.btn.green-meadow(ng-click='saveCallSummary(data)') Save
+               //button.btn.btn-account.btn-send(id='joinButton', type='submit') Save
+               br
+               br
+               div(style='text-align: right;')
+                  small powered by
+                     a(href='https://api.kibosupport.com') KiboSupport
