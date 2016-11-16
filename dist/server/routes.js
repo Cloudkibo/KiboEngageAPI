@@ -52,6 +52,6 @@ module.exports = function(app) {
   app.route('/')
     .get(function(req, res) {
       //res.redirect('/docs');
-      res.redirect('KiboEngage API is up and running.');
+      res.send('KiboEngage API is up and running.');
     });
 };
