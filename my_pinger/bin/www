@@ -40,7 +40,7 @@ var interval = setInterval(function(str1, str2) {
     }
   }
 
-  needle.get('https://api.kibosupport.com/ping', options, function(err, resp) {
+  needle.get('https://localhost:8443/ping', options, function(err, resp) {
     console.log(err);
     console.log(resp);
   });
