@@ -8,6 +8,7 @@
 
 // change the value to development for localhost and production for production
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';//development';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var express = require('express');
 var mongoose = require('mongoose');
