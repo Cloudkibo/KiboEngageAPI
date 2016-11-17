@@ -45,4 +45,7 @@ router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
 router.post('/kiboengage',controller.createKiboEngageUser);
 router.get('/reapplyverificationlink/kiboengage', auth.isAuthenticated(), controller.reapplyverificationlinkKiboEngage);
+router.get('/ping', function(req, res){
+  res.send('ping response sent at '+ Date.now());
+})
 module.exports = router;
