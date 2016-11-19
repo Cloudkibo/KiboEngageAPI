@@ -13,11 +13,11 @@ exports.index = function(req, res) {
 
 // Get a single ipcountry
 exports.show = function(req, res) {
-  Ipcountry.findById(req.params.id, function (err, ipcountry) {
+  Ipcountry.findOne({startipint : {$lte : req.params.id}, endipint : {$gte : req.params.id}}, function(err, ipcountry){
     if(err) { return handleError(res, err); }
     if(!ipcountry) { return res.send(404); }
     return res.json(ipcountry);
-  });
+  })
 };
 
 // Creates a new ipcountry in the DB.

@@ -517,3 +517,39 @@ definitions:
       companyid:
         type: string
         description: Unique id of the company
+  AgentInitiatedCalls:
+    type: object
+    description: These are the calls or support sessions with customers which were initiated by agents.
+    properties:
+      uniqueid:
+        type: string
+      agentname:
+        type: string
+      agentemail:
+        type: string
+      departmentid:
+        type: string
+      username:
+        type: string
+      useremail:
+        type: string
+      question:
+        type: string
+      currentPage:
+        type: string
+      fullurl:
+        type: string
+      phone:
+        type: string
+      browser:
+        type: string
+      ipAddress:
+        type: string
+      country:
+        type: string
+      room:
+        type: string
+      date:
+        type: string
+      request_id:
+        type: string
