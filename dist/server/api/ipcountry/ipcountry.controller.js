@@ -13,9 +13,12 @@ exports.index = function(req, res) {
 
 // Get a single ipcountry
 exports.show = function(req, res) {
+  console.log('inside the get ip information route')
+  console.log(req.params.id);
   Ipcountry.findOne({startipint : {$lte : req.params.id}, endipint : {$gte : req.params.id}}, function(err, ipcountry){
     if(err) { return handleError(res, err); }
     if(!ipcountry) { return res.send(404); }
+    console.log(ipcountry);
     return res.json(ipcountry);
   })
 };
