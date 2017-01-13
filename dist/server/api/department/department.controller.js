@@ -7,7 +7,7 @@ var user = require('../user/user.model');
 var companyprofile = require('../companyprofile/companyprofile.model');
 var MessageChannel = require('../messagechannels/messagechannels.model');
 var Sessions = require('../visitorcalls/visitorcalls.model');
-
+var logger = require('../../components/logger/logger');
 // Get list of departments
 exports.index = function(req, res) {
   if(req.user.isOwner == 'Yes'){
@@ -275,6 +275,7 @@ exports.create = function(req, res) {
 
 // Updates an existing department in the DB.
 exports.update = function(req, res) {
+  logger.serverLog('info', 'This is body in editteam '+ JSON.stringify(req.body) );
   user.findById(req.user._id, function (err, gotUser) {
     if (err) return console.log(err);
 
