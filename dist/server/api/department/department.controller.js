@@ -572,6 +572,25 @@ exports.createKiboengage = function(req, res) {
               if(totalDeptsCount < gotMaxDept.maxnumberofdepartment){
                 newDepartment.save(function(err2,record){
                   if(err2) return console.log(err2);
+                        // create dept agents
+                  if(req.body.deptagents){
+                    logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
+  
+                    for(var agent in req.body.deptagents){
+                      logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
+  
+                    var newdeptagent = new deptagent({
+                      deptid : record._id,
+                      companyid : clientUser.uniqueid,
+                      agentid : req.body.deptagents[agent]._id
+                    });
+
+                      newdeptagent.save(function(err4){
+                        if(err4) return console.log(err4)
+                      })
+
+                    }
+                  }
                     var channel = new MessageChannel({
                        msg_channel_name : 'General',
                        msg_channel_description: 'This channel is for general discussions',
