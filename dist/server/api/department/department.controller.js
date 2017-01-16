@@ -462,6 +462,8 @@ function handleError(res, err) {
 
 // Creates a new department in the DB.
 exports.createKiboengage = function(req, res) {
+  logger.serverLog('info', 'This is body in createteam '+ JSON.stringify(req.body) );
+  
   user.findById(req.user._id, function (err, gotUser) {
     if (err) return console.log(err);
 
@@ -491,6 +493,23 @@ exports.createKiboengage = function(req, res) {
                 if(totalDeptsCount < gotMaxDept.maxnumberofdepartment){
                   newDepartment.save(function(err2,record){
                     if(err2) return console.log(err2);
+
+                    // create dept agents
+                    if(req.body.deptagents){
+                    for(var agent in req.body.deptagents){
+
+                    var newdeptagent = new deptagent({
+                      deptid : record._id,
+                      companyid : clientUser.uniqueid,
+                      agentid : req.body.deptagents[agent]._id
+                    });
+
+                      newdeptagent.save(function(err4){
+                        if(err4) return console.log(err4)
+                      })
+
+                    }
+                  }
                     //create default message channel
                     
                      var channel = new MessageChannel({
