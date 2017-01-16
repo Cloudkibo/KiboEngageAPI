@@ -581,7 +581,7 @@ exports.createKiboengage = function(req, res) {
   
                     var newdeptagent = new deptagent({
                       deptid : record._id,
-                      companyid : clientUser.uniqueid,
+                      companyid : record.companyid,
                       agentid : req.body.deptagents[agent]._id
                     });
 
