@@ -495,9 +495,12 @@ exports.createKiboengage = function(req, res) {
                     if(err2) return console.log(err2);
 
                     // create dept agents
-                    if(req.body.deptagents){
+                  if(req.body.deptagents){
+                    logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
+  
                     for(var agent in req.body.deptagents){
-
+                      logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
+  
                     var newdeptagent = new deptagent({
                       deptid : record._id,
                       companyid : clientUser.uniqueid,
