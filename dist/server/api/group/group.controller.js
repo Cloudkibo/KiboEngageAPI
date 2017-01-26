@@ -42,7 +42,7 @@ exports.index = function(req, res) {
 
       }
 
-      Group.find({companyid : req.user.uniqueid, deleteStatus : 'No', _id : {$in : groupsIdArray}}).populate('createdby').exec(function (err, groups){
+      Group.find({companyid : req.user.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err, groups){
 
         if(err) { return handleError(res, err); }
         return res.json(200, groups);
