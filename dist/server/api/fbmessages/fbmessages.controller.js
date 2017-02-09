@@ -1,44 +1,35 @@
 'use strict';
 
 var _ = require('lodash');
-var fbCustomers = require('./fbcustomers.model');
+var fbmessages = require('./fbmessages.model');
 var user = require('../user/user.model');
 var configuration = require('../configuration/configuration.model');
 var logger = require('../../components/logger/logger');
 
-// Get list of Customerss
+// Get list of Facebook Chat Messages
 exports.index = function(req, res) {
-  logger.serverLog('info', 'Fetch fbCustomer');
+  logger.serverLog('info', 'Fetch fbmessages');
  
-  fbCustomers.find({companyid : req.user.uniqueid}, function (err, fbcustomers) {
+  fbmessages.find({companyid : req.user.uniqueid}, function (err, fbchats) {
     if(err) { return handleError(res, err); }
-    return res.json(200, fbcustomers);
+    return res.json(200, fbchats);
   });
 };
 
 
-// Creates a new fbCustomers in the DB.
+
+
+
+
+// Creates a new fb message in the DB.
 exports.create = function(req, res) {
-  logger.serverLog('info', 'Inside Create Customer, req body = '+ JSON.stringify(req.body));
-
-
-
-  fbCustomers.count({user_id : req.body.user_id, companyid : req.user.uniqueid}, function(err, gotCount){
-
-        if(gotCount > 0)
-          res.send({status: 'danger', msg: 'Customer Already created'});
-        else{
-
-         fbCustomers.create(req.body, function(err, customer) {
-                if(err) { return handleError(res, err); }
-
-                return  res.send({status: 'success', msg: customer});
-              });
-
-        }
-      })
-  
+  logger.serverLog('info', 'Inside Create Facebook message, req body = '+ JSON.stringify(req.body));
+  fbmessages.create(req.body, function(err, message) {
+    if(err) { return handleError(res, err); }
+    return res.json(201, message);
+  });
 };
+
 
 // Get a single customer
 /*exports.show = function(req, res) {
@@ -48,10 +39,6 @@ exports.create = function(req, res) {
     return res.json(customer);
   });
 };
-
-
-
-
 // Updates an existing Customers in the DB.
 exports.update = function(req, res) {
   if(req.body.customerID) { delete req.body.customerID; }
