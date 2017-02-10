@@ -10,7 +10,9 @@ var DepartmentSchema = new Schema({
   createdby : {type: Schema.ObjectId, ref: 'Account'},
   creationdate : { type: Date, default: Date.now },
   deleteStatus : { type: String, default: 'No' },
-  deptCapital : String
+  deptCapital : String,
+  isFbTeam :  { type: String, default: "false" },
+  fbPageID : String,
 });
 
 module.exports = mongoose.model('department', DepartmentSchema);

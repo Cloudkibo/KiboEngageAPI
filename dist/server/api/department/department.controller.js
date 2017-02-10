@@ -743,7 +743,9 @@ exports.createKiboengagefb = function(req, res) {
           deptCapital : req.body.deptname.toUpperCase(),
           deptdescription: req.body.deptdescription,
           companyid : clientUser.uniqueid,
-          createdby : clientUser._id
+          createdby : clientUser._id,
+          isFbTeam : "true",
+          fbPageID : req.body.fbPageID,
         });
 
 
@@ -805,7 +807,9 @@ exports.createKiboengagefb = function(req, res) {
         deptCapital : req.body.deptname.toUpperCase(),
         deptdescription: req.body.deptdescription,
         companyid : req.user.uniqueid,
-        createdby : req.user._id
+        createdby : req.user._id,
+        isFbTeam : "true",
+        fbPageID : req.body.fbPageID,
       });
 
 
