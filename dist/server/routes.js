@@ -48,6 +48,7 @@ module.exports = function(app) {
 // adding routes of Facebook messenger related APIs
   app.use('/api/fbmessages', require('./api/fbmessages'));
   app.use('/api/fbCustomers', require('./api/facebookCustomers'));
+  app.use('/api/fbpages', require('./api/facebookPages'));
 
   // All undefined asset or api routes should return a 404
   app.route('/:url(api|auth|components|app|bower_components|assets)/*')

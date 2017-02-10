@@ -723,3 +723,143 @@ exports.destroyKiboengage = function(req, res) {
       res.json(501, {});
   })
 };
+
+
+/// *** Create team for Fb messages
+
+
+// Creates a new department in the DB.
+exports.createKiboengagefb = function(req, res) {
+  logger.serverLog('info', 'This is body in createteam fb '+ JSON.stringify(req.body) );
+  
+  user.findById(req.user._id, function (err, gotUser) {
+    if (err) return console.log(err);
+
+    if(req.user.isOwner == 'Yes'){
+      user.findOne({email : req.user.ownerAs}, function(err, clientUser){
+        if(clientUser == null) return res.json(200, {status : 'danger'});
+        var newDepartment = new Department({
+          deptname : req.body.deptname,
+          deptCapital : req.body.deptname.toUpperCase(),
+          deptdescription: req.body.deptdescription,
+          companyid : clientUser.uniqueid,
+          createdby : clientUser._id
+        });
+
+
+        Department.count({deptCapital : req.body.deptname.toUpperCase(), companyid : clientUser.uniqueid}, function(err, gotCount){
+
+          if(gotCount > 0)
+            res.send({status: 'danger', msg: 'Can not create duplicate Groups.'});
+          else{
+
+            companyprofile.findOne({companyid: clientUser.uniqueid},function(err, gotMaxDept){
+              if(err) return console.log(err);
+
+              Department.count({companyid: clientUser.uniqueid, deleteStatus: 'No'}, function(err2, totalDeptsCount){
+
+                if(totalDeptsCount < gotMaxDept.maxnumberofdepartment){
+                  newDepartment.save(function(err2,record){
+                    if(err2) return console.log(err2);
+
+                    // create dept agents
+                  if(req.body.deptagents){
+                    logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
+  
+                    for(var agent in req.body.deptagents){
+                      logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
+  
+                    var newdeptagent = new deptagent({
+                      deptid : record._id,
+                      companyid : clientUser.uniqueid,
+                      agentid : req.body.deptagents[agent]._id
+                    });
+
+                      newdeptagent.save(function(err4){
+                        if(err4) return console.log(err4)
+                      })
+
+                    }
+                  }
+                    
+                    
+                  })
+
+
+                }
+                else{
+                  res.send({status: 'danger', msg: 'Can not create more than '+gotMaxDept.maxnumberofdepartment+' groups'});
+                }
+              })
+
+            })
+
+
+          }
+        })
+      })
+    } else if(gotUser.isAdmin == 'Yes'){
+
+      var newDepartment = new Department({
+        deptname : req.body.deptname,
+        deptCapital : req.body.deptname.toUpperCase(),
+        deptdescription: req.body.deptdescription,
+        companyid : req.user.uniqueid,
+        createdby : req.user._id
+      });
+
+
+      Department.count({deptCapital : req.body.deptname.toUpperCase(), companyid : req.user.uniqueid}, function(err, gotCount){
+
+        if(gotCount > 0)
+          res.send({status: 'danger', msg: 'Can not create duplicate Groups.'});
+        else{
+
+          companyprofile.findOne({companyid: req.user.uniqueid},function(err, gotMaxDept){
+            if(err) return console.log(err);
+
+            Department.count({companyid: req.user.uniqueid, deleteStatus: 'No'}, function(err2, totalDeptsCount){
+
+              if(totalDeptsCount < gotMaxDept.maxnumberofdepartment){
+                newDepartment.save(function(err2,record){
+                  if(err2) return console.log(err2);
+                        // create dept agents
+                  if(req.body.deptagents){
+                    logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
+  
+                    for(var agent in req.body.deptagents){
+                      logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
+  
+                    var newdeptagent = new deptagent({
+                      deptid : record._id,
+                      companyid : record.companyid,
+                      agentid : req.body.deptagents[agent]._id
+                    });
+
+                      newdeptagent.save(function(err4){
+                        if(err4) return console.log(err4)
+                      })
+
+                    }
+                  }
+                
+                })
+
+
+              }
+              else{
+                res.send({status: 'danger', msg: 'Can not create more than '+gotMaxDept.maxnumberofdepartment+' groups'});
+              }
+            })
+
+          })
+
+
+        }
+      })
+    }
+    else
+      res.json(501, {});
+  })
+};
+

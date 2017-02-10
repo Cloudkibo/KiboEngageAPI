@@ -13,6 +13,8 @@ router.post('/update', auth.isAuthenticated(), controller.update);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.post('/kiboengage',auth.isAuthenticated(),controller.createKiboengage);
+router.post('/kiboengagefb',auth.isAuthenticated(),controller.createKiboengagefb);
+
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.delete('/kiboengage/:id', auth.isAuthenticated(), controller.destroyKiboengage);
