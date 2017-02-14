@@ -30,7 +30,7 @@ var CompanyprofileSchema = new Schema({
   invitedscheduleemail1 : String,
   invitedscheduleemail2 : String,
   invitedscheduleemail3 : String,
-  enableFacebook : {type:Boolean,default:true}, //extra field to enable/disable facebook integration
+  enableFacebook : {type:String,default:'Yes'}, //extra field to enable/disable facebook integration
 
   maxnumberofdepartment : { type: Number, default: 20},
   maxnumberofchannels : { type: Number, default: 5} , //per group
