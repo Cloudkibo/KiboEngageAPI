@@ -20,7 +20,7 @@ exports.index = function(req, res) {
 // Creates a new fb pages in the DB.
 exports.create = function(req, res) {
   logger.serverLog('info', 'Inside Create facebook page info, req body = '+ JSON.stringify(req.body));
-
+  console.log('create fbpage info');
 
 
   fbpages.count({pageid : req.body.pageid, companyid : req.user.uniqueid}, function(err, gotCount){
@@ -66,12 +66,12 @@ exports.update = function(req, res) {
   });
 };
 
-/*// Deletes a Customers from the DB.
+// Deletes a facebook page from the DB.
 exports.destroy = function(req, res) {
-  Customers.findOne({customerID : req.params.id}, function (err, customer) {
+  fbpages.findOne({pageid : req.params.id}, function (err, fbpage) {
     if(err) { return handleError(res, err); }
-    if(!customer) { return res.send(404); }
-    customer.remove(function(err) {
+    if(!fbpage) { return res.send(404); }
+    fbpage.remove(function(err) {
       if(err) { return handleError(res, err); }
       return res.send(204);
     });
@@ -81,4 +81,3 @@ exports.destroy = function(req, res) {
 function handleError(res, err) {
   return res.send(500, err);
 }
-*/
