@@ -37,7 +37,7 @@ var CompanyprofileSchema = new Schema({
 
   showsummary : { type: String, default: 'No'},
 
-  widgetwindowtab: { type: String, default: 'window'} // other value is 'tab'
+  widgetwindowtab: { type: String, default: 'window'}, // other value is 'tab'
   widgetlogoURL: {type:String,default:''}
 
 });
