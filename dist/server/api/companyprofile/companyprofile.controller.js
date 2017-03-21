@@ -102,6 +102,7 @@ exports.updatecompanyprofile = function(req, res) {
                 gotSaveChangedCompanySettingsData.completeCallTime = req.body.completeCallTime;
                 gotSaveChangedCompanySettingsData.widgetwindowtab = req.body.widgetwindowtab;
                 gotSaveChangedCompanySettingsData.enableFacebook = req.body.enableFacebook;
+                gotSaveChangedCompanySettingsData.widgetlogoURL= req.body.widgetlogoURL;
 
                 gotSaveChangedCompanySettingsData.save(function (err) {
                   if (err) console.log(err);
@@ -183,6 +184,8 @@ exports.updatecompanyprofile = function(req, res) {
               gotSaveChangedCompanySettingsData.completeCallTime = req.body.completeCallTime;
               gotSaveChangedCompanySettingsData.widgetwindowtab = req.body.widgetwindowtab;
                gotSaveChangedCompanySettingsData.enableFacebook = req.body.enableFacebook;
+               gotSaveChangedCompanySettingsData.widgetlogoURL= req.body.widgetlogoURL;
+
 
               gotSaveChangedCompanySettingsData.save(function (err) {
                 if (err) console.log(err);
