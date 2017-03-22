@@ -8,6 +8,8 @@ var InviteagenttokenSchema = new Schema({
   token : {type: String, required: true},
   companyId : String,
   createdAt : {type: Date, required: true, default: Date.now, expires: '120h'}
+  companyName: String,
+  website:String,
 });
 
 module.exports = mongoose.model('inviteagenttoken', InviteagenttokenSchema);
