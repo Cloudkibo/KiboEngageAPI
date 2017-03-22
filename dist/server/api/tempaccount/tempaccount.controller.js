@@ -277,7 +277,7 @@ exports.createKiboEngage = function(req, res) {
                   sendgrid.send(email, function(err, json) {
                     if (err) { return console.log(err); }
 
-                    return res.send({status: 'success', msg: 'Email has been sent'});
+                    return res.send({status: 'success', msg: 'Email has been sent',url:'https://kiboengage.kibosupport.com/joincompany/'+ uniqueToken_id});
 
                   });
 
