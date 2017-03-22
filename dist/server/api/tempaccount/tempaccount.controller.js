@@ -233,7 +233,7 @@ exports.createKiboEngage = function(req, res) {
                 var inviteeData = new inviteagenttoken({
                   email : req.body.email,
                   token : uniqueToken_id,
-                  companyId : req.user.uniqueid
+                  companyId : req.user.uniqueid,
                   companyName: req.user.companyName,
                   website:req.user.website,
                 });
