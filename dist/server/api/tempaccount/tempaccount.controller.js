@@ -234,6 +234,8 @@ exports.createKiboEngage = function(req, res) {
                   email : req.body.email,
                   token : uniqueToken_id,
                   companyId : req.user.uniqueid
+                  companyName: req.user.companyName,
+                  website:req.user.website,
                 });
 
                 inviteeData.save(function(err){
