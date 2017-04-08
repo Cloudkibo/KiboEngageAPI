@@ -12,6 +12,7 @@ var FacebookCustomerSchema = new Schema({
   timezone : Number,
   companyid : String,
   gender : String, 
+  profile_pic: String,  
   
 });
 
