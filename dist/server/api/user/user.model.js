@@ -138,7 +138,7 @@ UserSchema
   .path('email')
   .validate(function(value, respond) {
     var self = this;
-    this.constructor.findOne({email: value}, function(err, user) {
+    this.constructor.findOne({email: value,companyName:this.companyName}, function(err, user) {
       if(err) throw err;
       if(user) {
         if(self.id === user.id) return respond(true);
@@ -153,7 +153,7 @@ UserSchema
   .path('phone')
   .validate(function(value, respond) {
     var self = this;
-    this.constructor.findOne({phone: value}, function(err, user) {
+    this.constructor.findOne({phone: value,companyName:this.companyName}, function(err, user) {
       if(err) throw err;
       if(user) {
         if(self.id === user.id) return respond(true);
