@@ -138,6 +138,8 @@ UserSchema
   .path('email')
   .validate(function(value, respond) {
     var self = this;
+    console.log(this.companyName);
+    console.log('companyName');
     this.constructor.findOne({email: value,companyName:this.companyName}, function(err, user) {
       if(err) throw err;
       if(user) {
