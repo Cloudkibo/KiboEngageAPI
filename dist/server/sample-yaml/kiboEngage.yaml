@@ -30,39 +30,13 @@ info:
     ## Error Handling
     Errors are returned using standard HTTP error code syntax. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error (bad or missing parameters, not authenticated etc.), and codes in the 5xx range indicate an error with KiboSupport’s servers. Any additional info is included in the body of the return call, JSON-formatted.
 
-    ## Cross-Domain
-    All cross-domain API requests made by a web browser are denied for security reasons. It means that browser-based requests are not allowed from 3rd party domains including localhost.
-    All API calls include an API key that could be easily stolen when making a request using a web browser. It means you should use backend languages for API.
-
-    ## Limits (under construction on API side)
-    Be nice. If you're sending too many requests too quickly, we'll send back a
-    `503` error code (server unavailable).
-    You are limited to 5000 requests per hour per `access_token` or `client_id`
-    overall. Practically, this means you should (when possible) authenticate
-    users so that limits are well outside the reach of a given user.
-
-    ## Structure
-
-    ### JSONP (under construction, will be released in next version of API)
-    If you're writing an AJAX application, and you'd like to wrap our response
-    with a callback, all you have to do is specify a callback parameter with
-    any API call:
-    ```
-    https://api.cloudkibo.com/v1/companyprofile?access_token=fb2e77d.47a0479900504cb3ab4a1f626d174d2d&callback=callbackFunction
-    ```
-    Would respond with:
-    ```js
-    callbackFunction({
-        ...
-    });
-    ```
   termsOfService: http://www.kibosupport.com/documentation
 
 ################################################################################
 #                  Host, Base Path, Schemes and Content Types                  #
 ################################################################################
 host: api.kibosupport.com
-#basePath: /v1
+basePath: /api
 schemes:
   - https
 produces:
@@ -109,36 +83,712 @@ consumes:
 ################################################################################
 paths:
 
-  /geographies/{geo-id}/media/recent:
-    parameters:
-      - name: geo-id
-        in: path
-        description: Geolocation ID
-        type: integer
-        required: true
-    get:
-      description: |
-        Get recent media from a geography subscription that you created.
-        **Note**: You can only access Geographies that were explicitly created
-        by your OAuth client. Check the Geography Subscriptions section of the
-        [real-time updates page](https://instagram.com/developer/realtime/).
-        When you create a subscription to some geography
-        that you define, you will be returned a unique geo-id that can be used
-        in this query. To backfill photos from the location covered by this
-        geography, use the [media search endpoint
-        ](https://instagram.com/developer/endpoints/media/).
+  /visitorcalls/createsession/:
+    post:
+      description: Create a new customer support session
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
-        - name: count
-          in: query
-          description: Max number of media to return.
-          type: integer
-        - name: min_id
-          in: query
-          description: Return media before this `min_id`.
-          type: integer
+        - name: customerID
+          in: formData
+          description: The unique id of the customer
+          type: string
+          required: true
+        - name: customerName
+          in: formData
+          description: The name of the customer
+          type: string
+          required: true
+        - name: email
+          in: formData
+          description: The email address of the customer
+          type: string
+          required: true
+        - name: country
+          in: formData
+          description: The country of the customer
+          type: string
+          required: true
+        - name: phone
+          in: formData
+          description: The phone number of the customer
+          type: string
+          required: true
+        - name: isMobile
+          in: formData
+          description: possible value, 'false' for web client and 'true' for mobile client
+          type: string
+          required: true
+        - name: messagechannel
+          in: formData
+          description: The message channel (sub group) where support is required
+          type: string
+          required: true
+        - name: session_id
+          in: formData
+          description: Unique id of the new session
+          type: string
+          required: true
+        - name: departmentid
+          in: formData
+          description: The unique id of the department (group) where support is required
+          type: string
+          required: true
+        - name: currentPage
+          in: formData
+          description: The title of the web page from where client wants to start support call (i.e. where web widget is installed)
+          type: string
+          required: true
+        - name: requesttime
+          in: formData
+          description: The time when support call session is created
+          type: string
+          required: true
+        - name: ipAddress
+          in: formData
+          description: The IP Address of client
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The unique id of the company of which the widget is used by client to do support call
+          type: string
+          required: true
+        - name: socketid
+          in: formData
+          description: The socket.io unique id given to web widget
+          type: string
+          required: true
+        - name: platform
+          in: formData
+          description: Shows if the visitor is on mobile application widget or web widget. Possible values are "web", and "mobile"
+          type: string
+          required: true
+        - name: device
+          in: formData
+          description: Shows which mobile device it is, possible values are "android", "ios"
+          type: string
+          required: true
+        - name: device_version
+          in: formData
+          description: Shows version of mobile device OS
+          type: string
+          required: true
       responses:
-        200:
+        '200':
           description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /visitorcalls/kiboengagesessions/:
+    get:
+      description: Gives all kiboengage sessions of the company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VisitorCallsWithCustomer'
+
+  /userchats/create/:
+    post:
+      description: Sends and saves the new message
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: to
+          in: formData
+          description: Recipient of the message
+          type: string
+          required: true
+        - name: from
+          in: formData
+          description: The sender of the message
+          type: string
+          required: true
+        - name: customername
+          in: formData
+          description: The name of the customer
+          type: string
+          required: true
+        - name: visitoremail
+          in: formData
+          description: The email of the customer
+          type: string
+          required: true
+        - name: agentemail
+          in: formData
+          description: The email of the the agent
+          type: string
+          required: true
+        - name: uniqueid
+          in: formData
+          description: The uniqueid of the chat message
+          type: string
+          required: true
+        - name: agentid
+          in: formData
+          description: The id of the agent
+          type: string
+          required: true
+        - name: toagent
+          in: formData
+          description: The email of the agent
+          type: string
+          required: true
+        - name: type
+          in: formData
+          description: The type of the message; two possible values are "log" and "message"
+          type: string
+          required: true
+        - name: msg
+          in: formData
+          description: Chat message
+          type: string
+          required: true
+        - name: request_id
+          in: formData
+          description: The request id given to session
+          type: string
+          required: true
+        - name: messagechannel
+          in: formData
+          description: The id of message channel (sub group)
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The id of the company
+          type: string
+          required: true
+        - name: datetime
+          in: formData
+          description: The datetime value for the chat message
+          type: string
+          required: true
+        - name: time
+          in: formData
+          description: The time value for the chat message
+          type: string
+          required: true
+        - name: is_seen
+          in: formData
+          description: The seen status of chat message, by default "no"
+          type: string
+          required: true
+        - name: fromMobile
+          in: formData
+          description: possible values "yes" or "no"
+          type: string
+          required: true
+        - name: socketid
+          in: formData
+          description: The socket id given to the customer or agent
+          type: string
+          required: true
+        - name: departmentid
+          in: formData
+          description: The id of the department (group)
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserChat'
+
+  /visitorcalls/updateStatus/:
+    post:
+      description: Update the current status of a specified session
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request_id
+          in: formData
+          description: Request id of the session
+          type: string
+          required: true
+        - name: status
+          in: formData
+          description: The new status of the session
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /visitorcalls/assignToAgent/:
+    post:
+      description: Assign the session to an agent
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionid
+          in: formData
+          description: unique id of the session
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The unique id of the company
+          type: string
+          required: true
+        - name: agentAssignment.assignedto
+          in: formData
+          description: email address of the agent to whome is assigned
+          type: string
+          required: true
+        - name: type
+          in: formData
+          description: type of the assignment
+          type: string
+          required: true
+        - name: agentAssignment
+          in: formData
+          description: type of the assignment
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /visitorcalls/assignToChannel/:
+    post:
+      description: Move the session to another sub group (message channel)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionid
+          in: formData
+          description: unique id of the session
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The unique id of the company
+          type: string
+          required: true
+        - name: channelAssignment.movedto
+          in: formData
+          description: id of the sub group where chat session is moved
+          type: string
+          required: true
+        - name: channelAssignment
+          in: formData
+          description: type of the assignment
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /userchats/:
+    get:
+      description: Get all the chat messages of the company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserChat'
+
+  /userchats/getSpecificChat/:
+    post:
+      description: Get sepecific chat message of a company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionid
+          in: formData
+          description: unique id of the session
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The unique id of the company
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserChat'
+
+  /visitorcalls/resolveSession/:
+    post:
+      description: Call this to resolve any support session
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request_id
+          in: formData
+          description: request id of the session
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /visitorcalls/pickSession/:
+    post:
+      description: Call this to pick any support session by an agent
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request_id
+          in: formData
+          description: request id of the session
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+
+  /visitorcalls/getSession/:
+    post:
+      description: Call this to get info on any support session
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request_id
+          in: formData
+          description: request id of the session
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserChat'
+
+  /customers/getcustomer/:
+    post:
+      description: Call this to get info on customer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: customerid
+          in: formData
+          description: unique id of the customer
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer'
+
+  /customers/:
+    post:
+      description: Create a new customer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          description: name of the customer
+          type: string
+          required: true
+        - name: email
+          in: formData
+          description: email of the customer
+          type: string
+          required: true
+        - name: country
+          in: formData
+          description: country of the customer
+          type: string
+          required: true
+        - name: phone
+          in: formData
+          description: phone of the customer
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: unique id of the company
+          type: string
+          required: true
+        - name: isMobileClient
+          in: formData
+          description: possible value, 'false' for web client and 'true' for mobile client
+          type: string
+          required: true
+        - name: customerID
+          in: formData
+          description: unique customer id provided by host application (in case of mobile)
+          type: string
+          required: false
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer'
+
+  /customers:
+    get:
+      description: Get list of all company customers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Customer'
+
+  /departments/:
+    get:
+      description: Get list of all groups
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Groups'
+
+  /departments/$id:
+    get:
+      description: Get info of group (department) identified by $id
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Groups'
+
+  /departments/kiboengage/$id:
+    delete:
+      description: Delete group (department) identified by $id
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              msg:
+                type: object
+                $ref: '#/definitions/Groups'
+
+  /messagechannels/:
+    post:
+      description: Call this to create message channel (sub group)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: msg_channel_name
+          in: formData
+          description: Name given to sub group
+          type: string
+          required: true
+        - name: msg_channel_description
+          in: formData
+          description: Description given to sub group
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: Company unique id
+          type: string
+          required: true
+        - name: groupid
+          in: formData
+          description: id of the group in which sub group is made
+          type: string
+          required: true
+        - name: createdby
+          in: formData
+          description: account id of the creator of sub group
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageChannel'
+
+  /messagechannels:
+    get:
+      description: Get list of sub groups
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MessageChannel'
+
+  /messagechannels/$id/:
+    delete:
+      description: Delete sub group identified by $id
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageChannel'
+
+  /messagechannels/$id /:
+    put:
+      description: Call this to create message channel (sub group)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: msg_channel_name
+          in: formData
+          description: Name given to sub group
+          type: string
+          required: true
+        - name: msg_channel_description
+          in: formData
+          description: Description given to sub group
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: Company unique id
+          type: string
+          required: true
+        - name: groupid
+          in: formData
+          description: id of the group in which sub group is made
+          type: string
+          required: true
+        - name: createdby
+          in: formData
+          description: account id of the creator of sub group
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageChannel'
+
+  /users/me:
+    get:
+      description: Get info of logged in user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+
+  /companyprofiles/fetch/:
+    get:
+      description: Get info your own company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CompanyProfile'
+
+  /users/allagents/:
+    get:
+      description: Get list of sub groups
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
 
 ################################################################################
 #                                 Definitions                                  #
@@ -325,11 +975,11 @@ definitions:
       webrtc_browser:
         type: string
         description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboSupport leverages this technology)
+
   UserChat:
     type: object
+    description: The table to store the chat
     properties:
-      _id:
-        type: string
       to:
         type: string
         description: Name of the receiver
@@ -355,6 +1005,7 @@ definitions:
       companyid:
         type: string
         description: Unique id of the company in which chat was done between agent and visitor
+
   CompanyProfile:
     type: object
     description: Use this integration to get and modifiy the profile and settings of the company.
@@ -553,3 +1204,110 @@ definitions:
         type: string
       request_id:
         type: string
+  Customer:
+    type: object
+    description: The record of the customer who starts support call on either web widget or mobile widget
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      country:
+        type: string
+      phone:
+        type: string
+      companyid:
+        type: string
+      isMobileClient:
+        type: string
+      customerID:
+        type: string
+
+  VisitorCallsWithCustomer:
+    type: object
+    description: Use this end-point to get information about all the visitor calls started on a company’s website. Complete information of visitor calls is given, i.e. who picked the call, what was the time, when the call was ended etc.
+    properties:
+      _id:
+        description: Unique id of the visitor call
+        type: string
+      customerid:
+        $ref: '#/definitions/Customer'
+      username:
+        type: string
+        description: Name of the visitor
+      useremail:
+        type: string
+        description: Email address of the visitor
+      phone:
+        type: string
+        description: Phone number of the visitor
+      country:
+        type: string
+        description: Country of the visitor
+      question:
+        type: string
+        description: Question that visitor asked
+      currentPage:
+        type: string
+        description: Page title of your website on which visitor was before clicking Live Help button
+      departmentid:
+        type: string
+        description: Department / Group id in which visitor has question (i.e. Sales)
+      fullurl:
+        type: string
+        description: Full URL of the web page on which visitor was before clicking Live Help button
+        #properties:
+        #  count:
+        #    type: integer
+        #  data:
+        #    type: array
+        #    items:
+        #      $ref: '#/definitions/Comment'
+      browser:
+        type: string
+        description: Browser of the visitor
+      ipAddress:
+        type: string
+        description: IP address of the visitor
+      room:
+        type: string
+        description: This is the unique id of your company
+      agentname:
+        type: string
+        description: Name of the agent who picked the call
+      agentemail:
+        type: string
+        description: Email address of the agent who picked the call
+      status:
+        type: string
+        description: Current status of the visitor call. Possible values are “waiting”, “progress”, “abandoned” and “completed”
+      initiator:
+        type: string
+        description: Shows if the visitor was invited by agent or visitor came to call by pressing live button and filling the form on widget. Possible values are “visitor” and “agent”
+      requesttime:
+        type: string
+        format: date-time
+        description: Time on which visitor requested the call
+      picktime:
+        type: string
+        format: date-time
+        description: Time on which visitor’s call was picked by any agent
+      endtime:
+        type: string
+        format: date-time
+        description: Time on which call between visitor and agent was ended. Agent is responsible to close the call by pressing Complete Call on website.
+      request_id:
+        type: string
+        description: This is the unique id given to the visitor call. This id is used in userchat table to track which chat message belong to which visitor call
+      callsummary:
+        type: string
+        description: Agent can give the call summary at the end of each call
+      calldescription:
+        type: string
+        description: Agent can give the call detailed description to define the issue of visitor
+      callresolution:
+        type: string
+        description: Agent can give the resolution summary to define how the issue of visitor was resolved
+      webrtc_browser:
+        type: string
+        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboSupport leverages this technology)
