@@ -14,11 +14,11 @@ info:
     Build something great!
 
     ## Basic Usage
-    All KiboEngage API requests start with `https://api.kibosupport.com/api/`
+    All KiboEngage API requests start with `https://api.kiboengage.com/api/`
 
     The next segment of the URI path depends on the type of request. For example:
 
-    `https://api.kibosupport.com/api/users/allagents`
+    `https://api.kiboengage.com/api/users/allagents`
 
     to get all agents data of a particular company.
 
@@ -28,14 +28,14 @@ info:
     All these needs to be attached to the request headers to use the API. In the next version of the API, client applications will just need to authenticate once and get auth token. For the basic version, we need to attach these credentials in request headers each time we call API endpoints.
 
     ## Error Handling
-    Errors are returned using standard HTTP error code syntax. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error (bad or missing parameters, not authenticated etc.), and codes in the 5xx range indicate an error with KiboSupport’s servers. Any additional info is included in the body of the return call, JSON-formatted.
+    Errors are returned using standard HTTP error code syntax. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error (bad or missing parameters, not authenticated etc.), and codes in the 5xx range indicate an error with KiboEngage’s servers. Any additional info is included in the body of the return call, JSON-formatted.
 
-  termsOfService: http://www.kibosupport.com/documentation
+  termsOfService: http://www.kiboengage.com/documentation
 
 ################################################################################
 #                  Host, Base Path, Schemes and Content Types                  #
 ################################################################################
-host: api.kibosupport.com
+host: api.kiboengage.com
 basePath: /api
 schemes:
   - https
@@ -974,7 +974,7 @@ definitions:
         description: Agent can give the resolution summary to define how the issue of visitor was resolved
       webrtc_browser:
         type: string
-        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboSupport leverages this technology)
+        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboEngage leverages this technology)
 
   UserChat:
     type: object
@@ -1310,4 +1310,4 @@ definitions:
         description: Agent can give the resolution summary to define how the issue of visitor was resolved
       webrtc_browser:
         type: string
-        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboSupport leverages this technology)
+        description: It shows if the visitor is on webrtc supported browser or not (WebRTC is technology used to do video/audio calls between two peers. KiboEngage leverages this technology)
