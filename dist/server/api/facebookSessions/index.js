@@ -9,9 +9,7 @@ var router = express.Router();
 router.get('/', auth.isAuthenticated(), controller.index);
 router.post('/', auth.isAuthenticated(), controller.createsession);
 
-router.post('/fbupdateStatus', auth.isAuthenticated(), controller.updateStatus);
 router.post('/fbassignToAgent', auth.isAuthenticated(), controller.assignToAgent);
-router.post('/fbpickSession', auth.isAuthenticated(), controller.pickSession);
 router.post('/fbresolveSession', auth.isAuthenticated(), controller.resolveSession);
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
