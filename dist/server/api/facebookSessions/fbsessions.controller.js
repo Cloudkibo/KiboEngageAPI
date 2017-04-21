@@ -51,6 +51,10 @@ exports.createsession = function(req, res) {
                       res.json(200, {status : 'success'});
                     });
               }
+
+              else{
+                res.json(200, {status : 'success'}); //customer and session both are already created
+              }
       })
     } else {
       var fbcustomers = new fbcustomers({
@@ -71,7 +75,7 @@ exports.createsession = function(req, res) {
         if(!customer) return res.json(501, {status: 'database error at find new customer'})
 
         var newData = new facebooksessions({
-          			  user_id : customer._id,
+          			     user_id : customer._id,
                       pageid: req.body.pageid,
                       requesttime : req.body.requesttime,
                       companyid: req.body.companyid,
