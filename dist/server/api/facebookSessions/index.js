@@ -11,8 +11,6 @@ router.post('/', auth.isAuthenticated(), controller.createsession);
 
 router.post('/fbassignToAgent', auth.isAuthenticated(), controller.assignToAgent);
 router.post('/fbresolveSession', auth.isAuthenticated(), controller.resolveSession);
-router.put('/:id', auth.isAuthenticated(), controller.update);
-router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 /*router.patch('/:id', auth.isAuthenticated(), controller.update);
 
 */
