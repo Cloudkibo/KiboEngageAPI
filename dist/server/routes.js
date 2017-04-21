@@ -47,6 +47,8 @@ module.exports = function(app) {
 
 // adding routes of Facebook messenger related APIs
   app.use('/api/fbmessages', require('./api/fbmessages'));
+  app.use('/api/fbsessions', require('./api/facebookSessions'));
+  app.use('/api/fbagentassignments', require('./api/fbagentassignment'));
   app.use('/api/fbCustomers', require('./api/facebookCustomers'));
   app.use('/api/fbpages', require('./api/facebookPages'));
 
