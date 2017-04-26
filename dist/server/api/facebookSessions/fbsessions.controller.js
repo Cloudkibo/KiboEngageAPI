@@ -57,8 +57,8 @@ exports.createsession = function(req, res) {
               }
       })
     } else {
-      var fbcustomers = new fbcustomers({
-          first_name : req.body.first_name,
+      var newfbcustomers = new fbcustomers({
+      first_name : req.body.first_name,
 		  last_name : req.body.last_name,
 		  user_id:req.body.user_id, //this is the facebook id of a customer
 		  email : req.body.email,
@@ -69,7 +69,7 @@ exports.createsession = function(req, res) {
 		  profile_pic: req.body.profile_pic,  
       });
 
-      fbcustomers.save(function(err, customer){
+      newfbcustomers.save(function(err, customer){
         if(err) return res.json(501, {status: 'database error at new customer'})
 
         if(!customer) return res.json(501, {status: 'database error at find new customer'})
