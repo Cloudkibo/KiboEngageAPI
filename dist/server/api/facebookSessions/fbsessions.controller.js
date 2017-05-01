@@ -136,3 +136,17 @@ exports.resolveSession = function(req, res) {
 };
 
 
+exports.updateSession = function(req, res) {
+  facebooksessions.findOne({pageid: req.body.pageid,user_id:req.body.user_id}, function(err, gotData){
+
+    gotData.status = req.body.status;
+    gotData.endtime = Date.now();
+
+    gotData.save(function(err){
+      if(err) console.log(err);
+      res.json(200, {status : 'success'});
+    });
+  })
+};
+
+
