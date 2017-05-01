@@ -46,14 +46,14 @@ exports.createsession = function(req, res) {
                       agent_ids: [],
                     });
 
-                    newData.save(function(err){
+                    newData.save(function(err,obj){
                       if(err) console.log(err);
-                      res.json(200, {status : 'success'});
+                      res.json(200, {status : 'success','fbsession':obj});
                     });
               }
 
               else{
-                res.json(200, {status : 'success'}); //customer and session both are already created
+                res.json(200, {status : 'success','fbsession':gotSession}); //customer and session both are already created
               }
       })
     } else {
@@ -83,9 +83,9 @@ exports.createsession = function(req, res) {
                       agent_ids: [],
         });
 
-        newData.save(function(err){
+        newData.save(function(err,obj){
           if(err) console.log(err);
-          res.json(200, {status : 'success'});
+          res.json(200, {status : 'success','fbsession':obj});
         });
       })
     }
