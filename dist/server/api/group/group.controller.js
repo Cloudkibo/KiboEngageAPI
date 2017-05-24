@@ -175,7 +175,7 @@ exports.create = function(req, res) {
         })
       })
     }
-     else if(gotUser.isAdmin == 'Yes'){
+     else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes'){
 
 
        var newGroup = new Group({
