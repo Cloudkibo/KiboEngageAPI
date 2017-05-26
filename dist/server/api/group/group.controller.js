@@ -428,7 +428,7 @@ exports.join = function(req, res) {
               });
 
     }
-    else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes'){
+    else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes' || gotUser.isAgent == 'Yes' ){
 
      
           Group.findById(req.body.groupid, function(err1, gotGroup){
