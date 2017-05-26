@@ -106,7 +106,7 @@ exports.show = function(req, res) {
         return res.json(group);
       })
     })
-  } else if(req.user.isAdmin == 'Yes'){
+  } else{
 
     Group.findById(req.params.id).populate('createdby').exec(function (err, group){
       if(err) { return handleError(res, err); }
@@ -114,29 +114,8 @@ exports.show = function(req, res) {
       return res.json(group);
     })
   }
-  else if(req.user.isSupervisor == 'Yes' || req.user.isAgent === 'Yes'){
-
-    groupagent.count({groupid : req.params.id, agentid : req.user._id}, function(err, gotCount){
-      if (err) { return handleError(res, err); }
-
-      if(gotCount>0){
-
-        Group.findById(req.params.id).populate('createdby').exec(function (err, group){
-          if(err) { return handleError(res, err); }
-          if(!group) { return res.send(404); }
-          return res.json(group);
-        })
-      }
-      else {
-        res.json(501, {});
-      }
-
-    })
-
-  }
-  else
-    res.json(501, {});
-
+  
+  
 };
 
 // Creates a new group in the DB.
