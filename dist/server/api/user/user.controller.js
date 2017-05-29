@@ -1435,8 +1435,11 @@ exports.createKiboEngageUser = function (req, res, next) {
               //console.log(json);
             });
 
-            tempaccount.remove({email : req.body.email}, function(err){
-              return console.log(err);
+            tempaccount.remove({email : req.body.email}, function (err) {
+              if (err) return console.log(err);
+              inviteagenttoken.remove({ token: token }, function (err) {
+                if (err) return console.log(err);
+              });
             });
 
           });
