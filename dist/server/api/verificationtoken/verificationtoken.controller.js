@@ -209,7 +209,7 @@ exports.showKiboEngage = function(req, res) {
         });
 
         user.save(function(err) {
-          res.json({status : 'success'});
+          res.json({status : 'success', body: user});
         });
 
       });
