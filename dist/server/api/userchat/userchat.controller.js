@@ -19,6 +19,13 @@ exports.sync = function(req, res) {
   });
 };
 
+exports.visitoremail = function(req, res) {
+  Userchat.find({companyid: req.body.companyid, visitoremail: req.body.visitoremail}, function (err, userchats) {
+    if(err) { return handleError(res, err); }
+    return res.json(200, userchats);
+  });
+};
+
 
 // incremental chat sync with message status 'sent'
 exports.partialChatSync = function(req, res) {
