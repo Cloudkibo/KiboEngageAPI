@@ -450,6 +450,30 @@ paths:
           schema:
             $ref: '#/definitions/UserChat'
 
+  /userchats/visitoremail/:
+    post:
+      description: Get sepecific chat message of a company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: visitoremail
+          in: formData
+          description: email address of the visitor
+          type: string
+          required: true
+        - name: companyid
+          in: formData
+          description: The unique id of the company
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserChat'
+
   /visitorcalls/resolveSession/:
     post:
       description: Call this to resolve any support session
