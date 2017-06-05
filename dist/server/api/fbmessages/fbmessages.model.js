@@ -9,7 +9,7 @@ var FacebookMessagesSchema = new Schema({
   timestamp : String,
   message: Object,
   companyid : String,
- 
+  urlmeta : Object,
   
 });
 
