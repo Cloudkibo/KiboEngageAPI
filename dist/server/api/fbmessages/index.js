@@ -8,6 +8,7 @@ var router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.post('/', auth.isAuthenticated(), controller.create);
+router.post('/create',auth.isAuthorizedWebHookTrigger(),controller.create);
 router.post('/update', auth.isAuthenticated(), controller.update);
 /*
 router.post('/getfbcustomer', auth.isAuthenticated(), controller.show);
