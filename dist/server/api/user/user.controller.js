@@ -14,7 +14,7 @@ var verificationtoken = require('../verificationtoken/verificationtoken.model');
 var visitorcalls = require('../visitorcalls/visitorcalls.model');
 var inviteagenttoken = require('../inviteagenttoken/inviteagenttoken.model');
 var tempaccount = require('../tempaccount/tempaccount.model');
-
+var group = require('../group/group.model'); //This is Team as per our new terminology - 20th Jun
 var validationError = function(res, err) {
   return res.json(422, err);
 };
@@ -1231,6 +1231,7 @@ exports.createKiboEngageUser = function (req, res, next) {
         invitedemail3 : gotConfig.invitedscheduleemail3
       });
 
+      // when a new company is created , we will create a Team 'All'
       var companyprofileData = new companyprofile({
         companyid : unique_id,
         isdomainemail : 'No',
@@ -1262,6 +1263,19 @@ exports.createKiboEngageUser = function (req, res, next) {
           if(err) console.log(err);
 
           var tokenString = crypto.randomBytes(12).toString('hex');
+          // when a new company is created , we will create a Team 'All'
+          var newGroup = new Group({
+          groupname : 'All',
+          groupdescription: 'General Team. All agents will be a part of this team',
+          companyid : unique_id,
+          createdby : user._id,
+          status : 'public',
+        });
+
+          newGroup.save(function(err){
+            if (err) return console.log(err)
+          });
+
 
           var newToken = new verificationtoken({
             user : user._id,
