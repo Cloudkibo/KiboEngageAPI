@@ -11,6 +11,8 @@ router.post('/sync', auth.isAuthenticated(), controller.sync);
 router.post('/visitoremail', auth.isAuthenticated(), controller.visitoremail);
 //router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', auth.isAuthorizedWebHookTrigger(), controller.create);
+router.post('/chatfromCloudkibo', auth.isAuthorizedWebHookTrigger(), controller.createforCloudkibo);
+
 router.post('/create', auth.isAuthenticated(), controller.create);
 router.post('/getSpecificChat', auth.isAuthenticated(), controller.getSpecificChat);
 router.post('/updateStatus', auth.isAuthenticated(), controller.updateStatus);

@@ -2,6 +2,9 @@
 
 var _ = require('lodash');
 var Userchat = require('./userchat.model');
+var fbmessages = require('../fbmessages/fbmessages.model');
+
+var logger = require('../../components/logger/logger');
 
 // Get list of userchats
 
@@ -55,6 +58,7 @@ exports.show = function(req, res) {
     return res.json(userchat);
   });
 };
+
 
 // Creates a new userchat in the DB.
 exports.create = function(req, res) {
@@ -130,3 +134,46 @@ exports.destroy = function(req, res) {
 function handleError(res, err) {
   return res.send(500, err);
 }
+
+// new endpoint for handling all the types of chat coming back from Cloudkibo
+// Creates a new userchat in the DB.
+exports.createforCloudkibo = function(req, res) {
+  logger.serverLog('info', 'Inside Cloudkibo endpoint, req body = '+ JSON.stringify(req.body));
+  var allparams = req.body.allparams;
+  if(allparams.conf_type === 'facebook'){
+          var today = new Date();
+          var uid = Math.random().toString(36).substring(7);
+          var unique_id = 'h' + uid + '' + today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+          var userid = req.body.request_id.split('$')[0]
+          var pageid = req.body.request_id.split('$')[1]
+          var messagebody= {
+                          mid: unique_id,
+                          seq: 1,
+                          text: req.body.msg,
+                        };
+
+          var saveMsg = {
+                        senderid: allparams.role == 'agent'?allparams.agentemail:allparams.visitoremail,
+                        recipientid: allparams.role == 'agent'?allparams.visitoremail:allparams.agentemail,
+                        companyid: req.body.companyid,
+                        timestamp: Date.now(),
+                        message: messagebody,
+
+                        pageid: pageid,
+                  
+                      }
+        fbmessages.create(saveMsg, function(err, message) {
+              if(err) { return handleError(res, err); }
+              return res.json(201, message);
+            });
+
+  }
+  else{
+    Userchat.create(req.body, function(err, userchat) {
+    if(err) { return handleError(res, err); }
+    return res.json(201, userchat);
+  });
+
+  }
+};
