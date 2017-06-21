@@ -15,6 +15,8 @@ var visitorcalls = require('../visitorcalls/visitorcalls.model');
 var inviteagenttoken = require('../inviteagenttoken/inviteagenttoken.model');
 var tempaccount = require('../tempaccount/tempaccount.model');
 var group = require('../group/group.model'); //This is Team as per our new terminology - 20th Jun
+var groupagent = require('../groupagent/groupagent.model'); //This is Team as per our new terminology - 20th Jun
+
 var validationError = function(res, err) {
   return res.json(422, err);
 };
@@ -449,18 +451,32 @@ exports.deleteagent = function(req, res) {
           gotAgent.save(function(err){
             if(err) return console.log(err);
 
-            deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
-              {deleteStatus : 'Yes'}, {multi : true}, function(err){
-                if(err) return console.log(err);
+        
+          deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+            {deleteStatus : 'Yes'}, {multi : true}, function(err){
+              if(err) return console.log(err);
 
-                User.find({uniqueid : clientUser.uniqueid, isDeleted: 'No'}, function(err3, gotAgents){
+                  groupagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+                                {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                  if(err) return console.log(err2);
 
-                  res.send({status: 'success', msg: gotAgents});
+                                  User.find({uniqueid : clientUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                    if(err) return console.log(err3);
 
-                })
+                                    res.send({status: 'success', msg: gotAgents});
+
+                                  })
 
 
-              })
+                                })
+                //res.send({status: 'success', msg: gotAgents});
+
+              
+
+
+            })
+
+
 
           })
 
@@ -486,11 +502,22 @@ exports.deleteagent = function(req, res) {
             {deleteStatus : 'Yes'}, {multi : true}, function(err){
               if(err) return console.log(err);
 
-              User.find({uniqueid : req.user.uniqueid, isDeleted: 'No'}, function(err3, gotAgents){
+                  groupagent.update({agentid : gotAgent._id, companyid : gotUser.uniqueid},
+                                {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                  if(err) return console.log(err2);
 
-                res.send({status: 'success', msg: gotAgents});
+                                  User.find({uniqueid : gotUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                    if(err) return console.log(err3);
 
-              })
+                                    res.send({status: 'success', msg: gotAgents});
+
+                                  })
+
+
+                                })
+                //res.send({status: 'success', msg: gotAgents});
+
+              
 
 
             })
@@ -1272,8 +1299,18 @@ exports.createKiboEngageUser = function (req, res, next) {
           status : 'public',
         });
 
-          newGroup.save(function(err){
+          newGroup.save(function(err,group){
             if (err) return console.log(err)
+            //we will also add agent in group 'ALL' when he signsup
+               var newgroupagent = new groupagent({
+                  groupid : group._id,
+                  companyid : unique_id,
+                  agentid : user._id,
+                });
+
+                newgroupagent.save(function(err4){
+                  if(err4) return console.log(err4)
+                })
           });
 
 
@@ -1402,6 +1439,18 @@ exports.createKiboEngageUser = function (req, res, next) {
             if (err) return console.log(err)
           });
 
+          group.findOne({groupname:'All',companyid:doc.companyId}, function(err, group){
+          // add the agent in Team 'ALL'
+            var newgroupagent = new groupagent({
+                  groupid : group._id,
+                  companyid : group.companyid,
+                  agentid : user._id,
+                });
+
+            newgroupagent.save(function(err4){
+                  if(err4) return console.log(err4)
+                })
+          });
 
           configuration.findOne({}, function(err, gotConfig) {
 
