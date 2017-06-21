@@ -24,6 +24,7 @@ module.exports = function(app) {
   app.use('/api/ipcountry', require('./api/ipcountry'));
   app.use('/api/deptagents', require('./api/deptagent'));
   app.use('/api/deptteams', require('./api/deptteam'));
+  app.use('/api/fbpageteams', require('./api/fbpageTeam'));
   app.use('/api/groupagents', require('./api/groupagent'));
 
   app.use('/api/departments', require('./api/department'));
