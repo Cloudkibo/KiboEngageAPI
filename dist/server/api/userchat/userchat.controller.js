@@ -139,7 +139,7 @@ function handleError(res, err) {
 // Creates a new userchat in the DB.
 exports.createforCloudkibo = function(req, res) {
   logger.serverLog('info', 'Inside Cloudkibo endpoint, req body = '+ JSON.stringify(req.body));
-  var allparams = req.body.allparams;
+  var allparams = req.body.allparam;
   if(allparams.conf_type === 'facebook'){
           var today = new Date();
           var uid = Math.random().toString(36).substring(7);
