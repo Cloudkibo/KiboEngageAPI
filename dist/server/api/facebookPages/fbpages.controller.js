@@ -5,6 +5,7 @@ var fbpages = require('./fbpages.model');
 var user = require('../user/user.model');
 var configuration = require('../configuration/configuration.model');
 var logger = require('../../components/logger/logger');
+var fbpageteam = require('../fbpageTeam/fbpageteam.model');
 
 // Get list of facebook pages
 exports.index = function(req, res) {
@@ -29,8 +30,31 @@ exports.create = function(req, res) {
           res.send({status: 'danger', msg: 'Facebook page Info Already exists'});
         else{
 
-         fbpages.create(req.body, function(err, page) {
+         fbpages.create(req.body.fbpage, function(err, page) {
                 if(err) { return handleError(res, err); }
+
+
+                //create fbpages teams
+
+                // create dept agents
+                  if(req.body.teamagents){
+                    logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(req.body.teamagents) );
+  
+                    for(var team in req.body.teamagents){
+                      logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(team) );
+  
+                    var newteamagent = new fbpageteam({
+                      pageid : page._id,
+                      companyid : req.user.uniqueid,
+                      teamid : req.body.teamagents[team]._id
+                    });
+
+                      newteamagent.save(function(err4){
+                        if(err4) return console.log(err4)
+                      })
+
+                    }
+                  }
 
                 return  res.send({status: 'success', msg: page});
               });
@@ -54,14 +78,38 @@ exports.show = function(req, res) {
 
 // Updates an existing facebook page info in the DB.
 exports.update = function(req, res) {
-  if(req.body.pageid) { delete req.body.pageid; }
+  logger.serverLog('info', 'Inside Edit fbpage '+ JSON.stringify(req.body) );
+  
+  if(req.body.fbpage.pageid) { delete req.body.fbpage.pageid; }
   fbpages.findOne({pageid : req.params.id}, function (err, page) {
     if (err) { return handleError(res, err); }
     if(!page) { return res.send(404); }
-    var updated = _.merge(page, req.body);
+    var updated = _.merge(page, req.body.fbpage);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, page);
+
+
+                fbpageteam.remove({pageid : req.body.fbpage._id}, function(err3){
+                  if(err3) return console.log(err3)
+                  if(req.body.teamagents)
+                  {  
+                      for(var team in req.body.teamagents){
+
+                        var newteamagent = new fbpageteam({
+                          pageid : req.body.fbpage._id,
+                          companyid : req.body.fbpage.companyid,
+                          teamid : req.body.teamagents[team]._id
+                        });
+
+                        newteamagent.save(function(err4){
+                          if(err4) return console.log(err4)
+                        })
+
+                      }
+                }
+                  return res.json(200, page);
+                });
+      
     });
   });
 };
@@ -73,7 +121,12 @@ exports.destroy = function(req, res) {
     if(!fbpage) { return res.send(404); }
     fbpage.remove(function(err) {
       if(err) { return handleError(res, err); }
-      return res.send(204);
+
+        fbpageteam.update({pageid : fbpage._id, companyid : fbpage.companyid},
+            {deleteStatus : 'Yes'}, {multi : true}, function(err){
+              if(err) return console.log(err);
+               return res.send(204);
+             });
     });
   });
 };
