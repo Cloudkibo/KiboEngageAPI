@@ -1291,7 +1291,7 @@ exports.createKiboEngageUser = function (req, res, next) {
 
           var tokenString = crypto.randomBytes(12).toString('hex');
           // when a new company is created , we will create a Team 'All'
-          var newGroup = new Group({
+          var newGroup = new group({
           groupname : 'All',
           groupdescription: 'General Team. All agents will be a part of this team',
           companyid : unique_id,
