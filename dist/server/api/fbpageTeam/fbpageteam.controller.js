@@ -6,7 +6,7 @@ var User = require('../user/user.model');
 
 // Get list of FbPageteams
 exports.index = function(req, res) {
-  FbPageteam.find(function (err, fbpageteams) {
+  FbPageteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('pageid teamid').exec(function (err, fbpageteams) {
     if(err) { return handleError(res, err); }
     return res.json(200, fbpageteams);
   });

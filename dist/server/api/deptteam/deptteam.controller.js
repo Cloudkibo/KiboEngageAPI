@@ -6,7 +6,7 @@ var User = require('../user/user.model');
 
 // Get list of deptteams
 exports.index = function(req, res) {
-  Deptteam.find(function (err, deptteams) {
+Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteams) {
     if(err) { return handleError(res, err); }
     return res.json(200, deptteams);
   });
