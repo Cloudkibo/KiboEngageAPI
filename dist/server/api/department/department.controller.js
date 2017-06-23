@@ -250,15 +250,15 @@ exports.update = function(req, res) {
               gotDepartment.save(function(err2){
                 if(err2) return console.log(err2)
 
-                deptagent.remove({deptid : req.body.dept._id}, function(err3){
+                deptteam.remove({deptid : req.body.dept._id}, function(err3){
                   if(err3) return console.log(err3)
 
-                  for(var agent in req.body.deptagents){
+                  for(var agent in req.body.teamagents){
 
-                    var newdeptagent = new deptagent({
+                    var newdeptagent = new deptteam({
                       deptid : req.body.dept._id,
                       companyid : clientUser.uniqueid,
-                      agentid : req.body.deptagents[agent]._id
+                      teamid : req.body.teamagents[agent]._id
                     });
 
                     newdeptagent.save(function(err4){
@@ -295,15 +295,15 @@ exports.update = function(req, res) {
             gotDepartment.save(function(err2){
               if(err2) return console.log(err2)
 
-              deptagent.remove({deptid : req.body.dept._id}, function(err3){
+              deptteam.remove({deptid : req.body.dept._id}, function(err3){
                 if(err3) return console.log(err3)
 
-                for(var agent in req.body.deptagents){
+                for(var agent in req.body.teamagents){
 
-                  var newdeptagent = new deptagent({
+                  var newdeptagent = new deptteam({
                     deptid : req.body.dept._id,
                     companyid : req.user.uniqueid,
-                    agentid : req.body.deptagents[agent]._id
+                    teamid : req.body.teamagents[agent]._id
                   });
 
                   newdeptagent.save(function(err4){
