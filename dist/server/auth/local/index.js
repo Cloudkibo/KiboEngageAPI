@@ -8,7 +8,7 @@ var User = require('./../../api/user/user.model.js');
 var router = express.Router();
 
 router.post('/', function(req, res, next) {
-  User.findOne({website: req.body.website, email: req.body.email}, function (err, user) {
+  User.findOne({website: req.body.website.toLowerCase(), email: req.body.email.toLowerCase()}, function (err, user) {
     if (err) return res.json(501, 'Internal server error. Please inform admin.');
     if (!user) return res.json(404, {message: 'This domain is not registered with us or your account does not belong to this domain'});
 
