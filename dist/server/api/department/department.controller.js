@@ -349,7 +349,7 @@ exports.destroy = function(req, res) {
           gotDepartment.save(function(err){
             if(err) return console.log(err);
 
-            deptagent.update({deptid : gotDepartment._id, companyid : clientUser.uniqueid},
+            deptteam.update({deptid : gotDepartment._id, companyid : clientUser.uniqueid},
               {deleteStatus : 'Yes'}, {multi : true}, function(err){
                 if(err) return console.log(err);
 
@@ -383,7 +383,7 @@ exports.destroy = function(req, res) {
         gotDepartment.save(function(err){
           if(err) return console.log(err);
 
-          deptagent.update({deptid : gotDepartment._id, companyid : gotUser.uniqueid},
+          deptteam.update({deptid : gotDepartment._id, companyid : gotUser.uniqueid},
             {deleteStatus : 'Yes'}, {multi : true}, function(err){
               if(err) return console.log(err);
 
