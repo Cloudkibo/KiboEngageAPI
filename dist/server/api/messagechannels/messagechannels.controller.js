@@ -18,7 +18,7 @@ exports.index = function(req, res) {
       })
     })
   }
-  else if(req.user.isAdmin == 'Yes'){
+  else{
     console.log('inside is admin')
     console.log(req.user)
     MessageChannel.find({companyid : req.user.uniqueid,deleteStatus : 'No'}, function (err, gotmessagechannel){
@@ -28,28 +28,7 @@ exports.index = function(req, res) {
     })
 
   }
-  else if(req.user.isAgent == 'Yes' || req.user.isSupervisor == 'Yes'){
 
-    deptagent.find({
-      companyid: req.user.uniqueid, agentid: req.user._id, deleteStatus : 'No'
-    }).exec(function (err, gotDeptsData){
-
-      var departmentsIdArray = new Array();
-
-      for(var index in gotDeptsData){
-
-        departmentsIdArray[index] = gotDeptsData[index].deptid;
-
-      }
-
-      MessageChannel.find({ companyid : req.user.uniqueid,deleteStatus : 'No', groupid : {$in : departmentsIdArray}},
-        function (err, gotmessagechannel){
-          if(err) { return handleError(res, err); }
-          return res.json(200, gotmessagechannel);
-        })
-
-    })
-  }
 };
 
 // Get a single MessageChannel
