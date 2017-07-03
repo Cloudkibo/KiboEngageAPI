@@ -31,28 +31,7 @@ exports.index = function(req, res) {
     })
 
   }
-  else if(req.user.isAgent == 'Yes' || req.user.isSupervisor == 'Yes'){
 
-    deptagent.find({
-      companyid: req.user.uniqueid, agentid: req.user._id, deleteStatus : 'No'
-    }).exec(function (err, gotDeptsData){
-
-      var departmentsIdArray = new Array();
-
-      for(var index in gotDeptsData){
-
-        departmentsIdArray[index] = gotDeptsData[index].deptid;
-
-      }
-
-      Visitorcalls.find({ room : req.user.uniqueid, departmentid : {$in : departmentsIdArray}},
-        function (err, gotCallsData){
-          if(err) { return handleError(res, err); }
-          return res.json(200, gotCallsData);
-        })
-
-    })
-  }
 };
 
 exports.index2 = function(req, res) {
