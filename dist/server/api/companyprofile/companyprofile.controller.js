@@ -116,10 +116,10 @@ exports.updatecompanyprofile = function(req, res) {
 
                 });
             // }
-            })
+           // });
          // }
 
-        })
+        });
 
       })
     })
@@ -199,7 +199,7 @@ exports.updatecompanyprofile = function(req, res) {
 
               });
             //}
-          })
+         // })
        // }
 
       })
