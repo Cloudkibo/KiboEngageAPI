@@ -5,6 +5,7 @@ var Companyprofile = require('./companyprofile.model');
 var department = require('../department/department.model');
 var configuration = require('../configuration/configuration.model');
 var User = require('../user/user.model');
+var logger = require('../../components/logger/logger');
 
 // Get list of companyprofiles
 exports.index = function(req, res) {
@@ -37,7 +38,8 @@ exports.fetch = function(req, res) {
 
 // Update the company profile and settings
 exports.updatecompanyprofile = function(req, res) {
-
+  logger.serverLog('info', 'This is body in companyprofile '+ JSON.stringify(req.body) );
+  
   if(req.user.isOwner == 'Yes'){
     User.findOne({email : req.user.ownerAs}, function(err, clientUser){
       Companyprofile.findOne({companyid: clientUser.uniqueid}, function(err, gotSaveChangedCompanySettingsData){
