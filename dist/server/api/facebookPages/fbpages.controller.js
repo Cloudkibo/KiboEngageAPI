@@ -44,7 +44,7 @@ exports.create = function(req, res) {
                     for(var team in req.body.teamagents){
                       logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(team) );
   
-                    var newteamagent = new fbpageteam({
+                    var newteamagent = new FbPageteam({
                       pageid : page._id,
                       companyid : req.user.uniqueid,
                       teamid : req.body.teamagents[team]._id
@@ -110,13 +110,13 @@ exports.update = function(req, res) {
       if (err) { return handleError(res, err); }
 
 
-                fbpageteam.remove({pageid : req.body.fbpage._id}, function(err3){
+                FbPageteam.remove({pageid : req.body.fbpage._id}, function(err3){
                   if(err3) return console.log(err3)
                   if(req.body.teamagents)
                   {  
                       for(var team in req.body.teamagents){
 
-                        var newteamagent = new fbpageteam({
+                        var newteamagent = new FbPageteam({
                           pageid : req.body.fbpage._id,
                           companyid : req.body.fbpage.companyid,
                           teamid : req.body.teamagents[team]._id
@@ -143,7 +143,7 @@ exports.destroy = function(req, res) {
     fbpage.remove(function(err) {
       if(err) { return handleError(res, err); }
 
-        fbpageteam.update({pageid : fbpage._id, companyid : fbpage.companyid},
+        FbPageteam.update({pageid : fbpage._id, companyid : fbpage.companyid},
             {deleteStatus : 'Yes'}, {multi : true}, function(err){
               if(err) return console.log(err);
                return res.send(204);
