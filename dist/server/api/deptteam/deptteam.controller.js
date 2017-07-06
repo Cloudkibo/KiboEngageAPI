@@ -14,7 +14,7 @@ Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('dep
 };
 
 
-exports.deptteamAgents = function(req, res) {
+exports.showTeamandAgents = function(req, res) {
 Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteams) {
     if(err) { return handleError(res, err); }
      //get team agents
