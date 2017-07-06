@@ -7,6 +7,7 @@ var auth = require('../../auth/auth.service');
 var router = express.Router();
 
 router.post('/getpage', auth.isAuthenticated(), controller.show);
+router.post('/getpagewithTeams', auth.isAuthenticated(), controller.showfbpage);
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.post('/', auth.isAuthenticated(), controller.create);

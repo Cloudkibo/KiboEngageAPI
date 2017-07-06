@@ -5,7 +5,8 @@ var fbpages = require('./fbpages.model');
 var user = require('../user/user.model');
 var configuration = require('../configuration/configuration.model');
 var logger = require('../../components/logger/logger');
-var fbpageteam = require('../fbpageTeam/fbpageteam.model');
+var FbPageteam = require('../fbpageTeam/fbpageteam.model');
+var groupagent = require('../groupagent/groupagent.model');
 
 // Get list of facebook pages
 exports.index = function(req, res) {
@@ -73,6 +74,26 @@ exports.show = function(req, res) {
   });
 };
 
+
+// Endpoint to get fbpage, fbpageTeams and Team Agents in single API call
+exports.showfbpage = function(req, res) {
+  fbpages.findOne({pageid : req.body.pageid}, function (err, page) {
+    if(err) { return handleError(res, err); }
+    if(!page) { return res.send(404); }
+
+    //get fbpageTeams
+    FbPageteam.find({companyid : page.companyid,deleteStatus : 'No'}).populate('pageid teamid').exec(function (err, fbpageteams) {
+    if(err) { return handleError(res, err); }
+
+    //get team agents
+     groupagent.find({companyid : page.companyid,deleteStatus : 'No'}).populate('groupid agentid').exec(function (err, teamagents) {
+          if(err) { return handleError(res, err); }
+          return res.json(200, {teamagents:teamagents,fbpageteams:fbpageteams,page:page});
+           });
+  });
+  
+  });
+};
 
 
 
