@@ -57,7 +57,7 @@ exports.allagents = function(req, res) {
 
     User.find({uniqueid : req.user.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
       if (!err) {
-        res.json(200, gotAgents); 
+        res.json(200, {agents:gotAgents}); 
       }
   else
     res.json(501, {});
