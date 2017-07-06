@@ -56,7 +56,7 @@ exports.changeviewas = function(req, res) {
 exports.allagents = function(req, res) {
 
     User.find({uniqueid : req.user.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
-      if (!err) {
+      if (!err3) {
         res.json(200, {agents:gotAgents}); 
       }
   else
