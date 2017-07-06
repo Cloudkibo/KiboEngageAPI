@@ -18,7 +18,7 @@ exports.showTeamandAgents = function(req, res) {
 Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteams) {
     if(err) { return handleError(res, err); }
      //get team agents
-     groupagent.find({companyid : page.companyid,deleteStatus : 'No'}).populate('groupid agentid').exec(function (err, teamagents) {
+     groupagent.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('groupid agentid').exec(function (err, teamagents) {
           if(err) { return handleError(res, err); }
           return res.json(200, {teamagents:teamagents,deptteams:deptteams});
            });
