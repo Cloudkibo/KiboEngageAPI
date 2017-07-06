@@ -52,88 +52,16 @@ exports.changeviewas = function(req, res) {
 /**
  * Get list of all agents
  */
+
 exports.allagents = function(req, res) {
 
-  if(req.user.isOwner == 'Yes'){
-    User.findOne({email : req.user.ownerAs}, function(err, clientUser){
-      if(clientUser == null) return res.json(200, {});
-      User.find({uniqueid : clientUser.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
-
-        var result = {};
-
-        result.agents = gotAgents;
-        result.departments = [];
-
-        var agentsIdArray = new Array();
-
-        for(var index in result.agents){
-          agentsIdArray[index] = result.agents[index]._id;
-          result.agents[index].departments = [];
-        }
-
-        deptagent.find({agentid : {$in : agentsIdArray}, deleteStatus:'No'}).populate('deptid').exec(function(err, gotDepts){
-          if(err) return res.send(500, err);
-
-          for(index in result.agents){
-            var index3 = 0;
-            var departments = [];
-            for(var index2 in gotDepts){
-              if(gotDepts[index2].agentid.toString() == result.agents[index]._id.toString()){
-                departments[index3] = gotDepts[index2].deptid.deptname;
-                index3 ++;
-              }
-            }
-            result.departments[index] = departments;
-            //result.agents[index].departments = departments;
-          }
-
-          res.json(200, result);
-
-        })
-
-      })
-    })
-  } else if(req.user.isAdmin == 'Yes' || req.user.isSupervisor == 'Yes' || req.user.isAgent === 'Yes'){
-
     User.find({uniqueid : req.user.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
-
-      var result = {};
-
-      result.agents = gotAgents;
-      result.departments = [];
-
-      var agentsIdArray = new Array();
-
-      for(var index in result.agents){
-        agentsIdArray[index] = result.agents[index]._id;
-        result.agents[index].departments = [];
+      if (!err) {
+        res.json(200, gotAgents); 
       }
-
-      deptagent.find({agentid : {$in : agentsIdArray}, deleteStatus:'No'}).populate('deptid').exec(function(err, gotDepts){
-        if(err) return res.send(500, err);
-
-        for(index in result.agents){
-          var index3 = 0;
-          var departments = [];
-          for(var index2 in gotDepts){
-            if(gotDepts[index2].agentid.toString() == result.agents[index]._id.toString()){
-              departments[index3] = gotDepts[index2].deptid.deptname;
-              index3 ++;
-            }
-          }
-          result.departments[index] = departments;
-          //result.agents[index].departments = departments;
-        }
-
-        res.json(200, result);
-
-      })
-
-    })
-  }
   else
     res.json(501, {});
-
+});
 };
 
 /**
