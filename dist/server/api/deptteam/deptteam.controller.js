@@ -3,12 +3,26 @@
 var _ = require('lodash');
 var Deptteam = require('./deptteam.model');
 var User = require('../user/user.model');
+var groupagent = require('../groupagent/groupagent.model');
 
 // Get list of deptteams
 exports.index = function(req, res) {
 Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteams) {
     if(err) { return handleError(res, err); }
     return res.json(200, deptteams);
+  });
+};
+
+
+exports.deptteamAgents = function(req, res) {
+Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteams) {
+    if(err) { return handleError(res, err); }
+     //get team agents
+     groupagent.find({companyid : page.companyid,deleteStatus : 'No'}).populate('groupid agentid').exec(function (err, teamagents) {
+          if(err) { return handleError(res, err); }
+          return res.json(200, {teamagents:teamagents,deptteams:deptteams});
+           });
+   // return res.json(200, deptteams);
   });
 };
 
