@@ -56,6 +56,28 @@ exports.index2 = function(req, res) {
 };
 
 
+exports.mobilesessions = function(req, res) {
+
+  if(req.user.isOwner == 'Yes'){
+    User.findOne({email : req.user.ownerAs}, function(err, clientUser){
+      if(clientUser == null) return res.json(200, []);
+      Visitorcalls.find({companyid : clientUser.uniqueid,deleteStatus : 'No',platform:'mobile'}).populate('customerid').exec(function (err, gotCallsData){
+        if(err) { return handleError(res, err); }
+        return res.json(200, gotCallsData);
+      })
+    })
+  }
+  else{
+    Visitorcalls.find({companyid : req.user.uniqueid,deleteStatus : 'No',platform:'mobile'}).populate('customerid').exec(function (err, gotCallsData){
+      if(err) { return handleError(res, err); }
+      return res.json(200, gotCallsData);
+    })
+
+  }
+
+};
+
+
 // Get Waiting Calls data
 exports.waitingcalls = function(req, res) {
 
