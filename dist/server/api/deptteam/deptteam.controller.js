@@ -63,8 +63,16 @@ exports.getallAgents = function(req, res) {
         var agents = [];
 
         for(var i in agentsgroup){
-          if(agentsgroup[i].agentid.isDeleted === 'No')
-            agents.push(agentsgroup[i].agentid);
+          if(agentsgroup[i].agentid.isDeleted === 'No'){
+            var selectedAgent = agentsgroup[i].agentid;
+            var payload = {
+              email : selectedAgent.email,
+              _id : selectedAgent._id,
+              firstname: selectedAgent.firstname,
+              lastname: selectedAgent.lastname
+            };
+            agents.push(payload);
+          }
         }
 
         return res.json(200, _.uniq(agents, 'email'));
