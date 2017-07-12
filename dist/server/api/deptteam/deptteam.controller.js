@@ -63,10 +63,11 @@ exports.getallAgents = function(req, res) {
         var agents = [];
 
         for(var i in agentsgroup){
-          agents.push(agentsgroup[i].agentid);
+          if(agentsgroup[i].agentid.isDeleted === 'No')
+            agents.push(agentsgroup[i].agentid);
         }
 
-        return res.json(200, agents);
+        return res.json(200, _.uniq(agents, 'email'));
       })
 
     });
