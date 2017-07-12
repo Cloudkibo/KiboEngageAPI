@@ -30,6 +30,17 @@ exports.create = function(req, res) {
   });
 };
 
+// Updates an existing message in the DB.
+exports.update = function(req, res) {
+ fbmessages.findOne({_id : req.body.id}, function (err, message) {
+     message.urlmeta = req.body.urlmeta;
+     message.save(function(err){
+      if(err) console.log(err);
+      res.json(200, {status : 'success'});
+    });
+  })
+};
+
 
 // Get a single customer
 /*exports.show = function(req, res) {

@@ -5,6 +5,7 @@ var Companyprofile = require('./companyprofile.model');
 var department = require('../department/department.model');
 var configuration = require('../configuration/configuration.model');
 var User = require('../user/user.model');
+var logger = require('../../components/logger/logger');
 
 // Get list of companyprofiles
 exports.index = function(req, res) {
@@ -37,7 +38,8 @@ exports.fetch = function(req, res) {
 
 // Update the company profile and settings
 exports.updatecompanyprofile = function(req, res) {
-
+  logger.serverLog('info', 'This is body in companyprofile '+ JSON.stringify(req.body) );
+  
   if(req.user.isOwner == 'Yes'){
     User.findOne({email : req.user.ownerAs}, function(err, clientUser){
       Companyprofile.findOne({companyid: clientUser.uniqueid}, function(err, gotSaveChangedCompanySettingsData){
@@ -45,7 +47,7 @@ exports.updatecompanyprofile = function(req, res) {
         configuration.findOne({}, function (err, gotConfig) {
           if (err) return console.log(err);
 
-          if(req.body.maxnumberofdepartment > gotConfig.maxnumberofdepartment){
+        /*  if(req.body.maxnumberofdepartment > gotConfig.maxnumberofdepartment){
             res.send({status: 'danger', msg: 'Max number of Groups cannot exceed '+ gotConfig.maxnumberofdepartment});
           }
           else if(req.body.allowChat === 'Yes' && gotConfig.allowChat === 'No'){
@@ -72,13 +74,14 @@ exports.updatecompanyprofile = function(req, res) {
           else if(req.body.allowsmsnotification === 'Yes' && gotConfig.allowsmsnotification === 'No'){
             res.send({status: 'danger', msg: 'SMS notification cannot be allowed. Please contact Kibosupport owner to enable the feature'});
           }
-          else {
+          */
+         /* else {
             department.count({companyid: clientUser.uniqueid, deleteStatus: "No"}, function (err, gotCount) {
 
               if (gotCount > req.body.maxnumberofdepartment) {
                 res.send({status: 'danger',	msg: 'You already have ' + gotCount + ' Groups. Cannot decrease number of groups'});
               }
-              else {
+              else {*/
 
                 gotSaveChangedCompanySettingsData.showsummary = req.body.showsummary;
                 gotSaveChangedCompanySettingsData.allowChat = req.body.allowChat;
@@ -112,11 +115,11 @@ exports.updatecompanyprofile = function(req, res) {
                   })
 
                 });
-              }
-            })
-          }
+            // }
+           // });
+         // }
 
-        })
+        });
 
       })
     })
@@ -127,7 +130,7 @@ exports.updatecompanyprofile = function(req, res) {
       configuration.findOne({}, function (err, gotConfig) {
         if (err) return console.log(err);
 
-        if(req.body.maxnumberofdepartment > gotConfig.maxnumberofdepartment){
+       /* if(req.body.maxnumberofdepartment > gotConfig.maxnumberofdepartment){
           res.send({status: 'danger', msg: 'Max number of Groups cannot exceed '+ gotConfig.maxnumberofdepartment});
         }
         else if(req.body.allowChat === 'Yes' && gotConfig.allowChat === 'No'){
@@ -161,7 +164,7 @@ exports.updatecompanyprofile = function(req, res) {
               res.send({status: 'danger',	msg: 'You already have ' + gotCount + ' Groups. Cannot decrease number of groups'});
             }
             else {
-
+            */
               gotSaveChangedCompanySettingsData.showsummary = req.body.showsummary;
               gotSaveChangedCompanySettingsData.allowChat = req.body.allowChat;
               gotSaveChangedCompanySettingsData.isdomainemail = req.body.isdomainemail;
@@ -195,9 +198,9 @@ exports.updatecompanyprofile = function(req, res) {
                 })
 
               });
-            }
-          })
-        }
+            //}
+         // })
+       // }
 
       })
 

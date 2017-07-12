@@ -14,6 +14,8 @@ var verificationtoken = require('../verificationtoken/verificationtoken.model');
 var visitorcalls = require('../visitorcalls/visitorcalls.model');
 var inviteagenttoken = require('../inviteagenttoken/inviteagenttoken.model');
 var tempaccount = require('../tempaccount/tempaccount.model');
+var group = require('../group/group.model'); //This is Team as per our new terminology - 20th Jun
+var groupagent = require('../groupagent/groupagent.model'); //This is Team as per our new terminology - 20th Jun
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -50,88 +52,16 @@ exports.changeviewas = function(req, res) {
 /**
  * Get list of all agents
  */
+
 exports.allagents = function(req, res) {
 
-  if(req.user.isOwner == 'Yes'){
-    User.findOne({email : req.user.ownerAs}, function(err, clientUser){
-      if(clientUser == null) return res.json(200, {});
-      User.find({uniqueid : clientUser.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
-
-        var result = {};
-
-        result.agents = gotAgents;
-        result.departments = [];
-
-        var agentsIdArray = new Array();
-
-        for(var index in result.agents){
-          agentsIdArray[index] = result.agents[index]._id;
-          result.agents[index].departments = [];
-        }
-
-        deptagent.find({agentid : {$in : agentsIdArray}, deleteStatus:'No'}).populate('deptid').exec(function(err, gotDepts){
-          if(err) return res.send(500, err);
-
-          for(index in result.agents){
-            var index3 = 0;
-            var departments = [];
-            for(var index2 in gotDepts){
-              if(gotDepts[index2].agentid.toString() == result.agents[index]._id.toString()){
-                departments[index3] = gotDepts[index2].deptid.deptname;
-                index3 ++;
-              }
-            }
-            result.departments[index] = departments;
-            //result.agents[index].departments = departments;
-          }
-
-          res.json(200, result);
-
-        })
-
-      })
-    })
-  } else if(req.user.isAdmin == 'Yes' || req.user.isSupervisor == 'Yes' || req.user.isAgent === 'Yes'){
-
     User.find({uniqueid : req.user.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
-
-      var result = {};
-
-      result.agents = gotAgents;
-      result.departments = [];
-
-      var agentsIdArray = new Array();
-
-      for(var index in result.agents){
-        agentsIdArray[index] = result.agents[index]._id;
-        result.agents[index].departments = [];
+      if (!err3) {
+        res.json(200, {agents:gotAgents}); 
       }
-
-      deptagent.find({agentid : {$in : agentsIdArray}, deleteStatus:'No'}).populate('deptid').exec(function(err, gotDepts){
-        if(err) return res.send(500, err);
-
-        for(index in result.agents){
-          var index3 = 0;
-          var departments = [];
-          for(var index2 in gotDepts){
-            if(gotDepts[index2].agentid.toString() == result.agents[index]._id.toString()){
-              departments[index3] = gotDepts[index2].deptid.deptname;
-              index3 ++;
-            }
-          }
-          result.departments[index] = departments;
-          //result.agents[index].departments = departments;
-        }
-
-        res.json(200, result);
-
-      })
-
-    })
-  }
   else
     res.json(501, {});
-
+});
 };
 
 /**
@@ -449,18 +379,32 @@ exports.deleteagent = function(req, res) {
           gotAgent.save(function(err){
             if(err) return console.log(err);
 
-            deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
-              {deleteStatus : 'Yes'}, {multi : true}, function(err){
-                if(err) return console.log(err);
+        
+          deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+            {deleteStatus : 'Yes'}, {multi : true}, function(err){
+              if(err) return console.log(err);
 
-                User.find({uniqueid : clientUser.uniqueid, isDeleted: 'No'}, function(err3, gotAgents){
+                  groupagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+                                {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                  if(err) return console.log(err2);
 
-                  res.send({status: 'success', msg: gotAgents});
+                                  User.find({uniqueid : clientUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                    if(err) return console.log(err3);
 
-                })
+                                    res.send({status: 'success', msg: gotAgents});
+
+                                  })
 
 
-              })
+                                })
+                //res.send({status: 'success', msg: gotAgents});
+
+              
+
+
+            })
+
+
 
           })
 
@@ -486,11 +430,22 @@ exports.deleteagent = function(req, res) {
             {deleteStatus : 'Yes'}, {multi : true}, function(err){
               if(err) return console.log(err);
 
-              User.find({uniqueid : req.user.uniqueid, isDeleted: 'No'}, function(err3, gotAgents){
+                  groupagent.update({agentid : gotAgent._id, companyid : gotUser.uniqueid},
+                                {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                  if(err) return console.log(err2);
 
-                res.send({status: 'success', msg: gotAgents});
+                                  User.find({uniqueid : gotUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                    if(err) return console.log(err3);
 
-              })
+                                    res.send({status: 'success', msg: gotAgents});
+
+                                  })
+
+
+                                })
+                //res.send({status: 'success', msg: gotAgents});
+
+              
 
 
             })
@@ -1231,6 +1186,7 @@ exports.createKiboEngageUser = function (req, res, next) {
         invitedemail3 : gotConfig.invitedscheduleemail3
       });
 
+      // when a new company is created , we will create a Team 'All'
       var companyprofileData = new companyprofile({
         companyid : unique_id,
         isdomainemail : 'No',
@@ -1262,6 +1218,29 @@ exports.createKiboEngageUser = function (req, res, next) {
           if(err) console.log(err);
 
           var tokenString = crypto.randomBytes(12).toString('hex');
+          // when a new company is created , we will create a Team 'All'
+          var newGroup = new group({
+          groupname : 'All',
+          groupdescription: 'General Team. All agents will be a part of this team',
+          companyid : unique_id,
+          createdby : user._id,
+          status : 'public',
+        });
+
+          newGroup.save(function(err,group){
+            if (err) return console.log(err)
+            //we will also add agent in group 'ALL' when he signsup
+               var newgroupagent = new groupagent({
+                  groupid : group._id,
+                  companyid : unique_id,
+                  agentid : user._id,
+                });
+
+                newgroupagent.save(function(err4){
+                  if(err4) return console.log(err4)
+                })
+          });
+
 
           var newToken = new verificationtoken({
             user : user._id,
@@ -1388,6 +1367,18 @@ exports.createKiboEngageUser = function (req, res, next) {
             if (err) return console.log(err)
           });
 
+          group.findOne({groupname:'All',companyid:doc.companyId}, function(err, group){
+          // add the agent in Team 'ALL'
+            var newgroupagent = new groupagent({
+                  groupid : group._id,
+                  companyid : group.companyid,
+                  agentid : user._id,
+                });
+
+            newgroupagent.save(function(err4){
+                  if(err4) return console.log(err4)
+                })
+          });
 
           configuration.findOne({}, function(err, gotConfig) {
 

@@ -24,35 +24,14 @@ exports.index = function(req, res) {
       })
     })
   }
-  else if(req.user.isAdmin == 'Yes'){
+  else{
     Visitorcalls.find({room : req.user.uniqueid}, function (err, gotCallsData){
       if(err) { return handleError(res, err); }
       return res.json(200, gotCallsData);
     })
 
   }
-  else if(req.user.isAgent == 'Yes' || req.user.isSupervisor == 'Yes'){
 
-    deptagent.find({
-      companyid: req.user.uniqueid, agentid: req.user._id, deleteStatus : 'No'
-    }).exec(function (err, gotDeptsData){
-
-      var departmentsIdArray = new Array();
-
-      for(var index in gotDeptsData){
-
-        departmentsIdArray[index] = gotDeptsData[index].deptid;
-
-      }
-
-      Visitorcalls.find({ room : req.user.uniqueid, departmentid : {$in : departmentsIdArray}},
-        function (err, gotCallsData){
-          if(err) { return handleError(res, err); }
-          return res.json(200, gotCallsData);
-        })
-
-    })
-  }
 };
 
 exports.index2 = function(req, res) {
@@ -66,35 +45,36 @@ exports.index2 = function(req, res) {
       })
     })
   }
-  else if(req.user.isAdmin == 'Yes'){
+  else{
     Visitorcalls.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('customerid').exec(function (err, gotCallsData){
       if(err) { return handleError(res, err); }
       return res.json(200, gotCallsData);
     })
 
   }
-  else if(req.user.isAgent == 'Yes' || req.user.isSupervisor == 'Yes'){
 
-    deptagent.find({
-      companyid: req.user.uniqueid, agentid: req.user._id, deleteStatus : 'No'
-    }).exec(function (err, gotDeptsData){
+};
 
-      var departmentsIdArray = new Array();
 
-      for(var index in gotDeptsData){
+exports.mobilesessions = function(req, res) {
 
-        departmentsIdArray[index] = gotDeptsData[index].deptid;
-
-      }
-
-      Visitorcalls.find({ companyid : req.user.uniqueid,deleteStatus : 'No', departmentid : {$in : departmentsIdArray}}).populate('customerid').exec(
-        function (err, gotCallsData){
-          if(err) { return handleError(res, err); }
-          return res.json(200, gotCallsData);
-        })
-
+  if(req.user.isOwner == 'Yes'){
+    User.findOne({email : req.user.ownerAs}, function(err, clientUser){
+      if(clientUser == null) return res.json(200, []);
+      Visitorcalls.find({companyid : clientUser.uniqueid,deleteStatus : 'No',platform:'mobile'}).populate('customerid').exec(function (err, gotCallsData){
+        if(err) { return handleError(res, err); }
+        return res.json(200, gotCallsData);
+      })
     })
   }
+  else{
+    Visitorcalls.find({companyid : req.user.uniqueid,deleteStatus : 'No',platform:'mobile'}).populate('customerid').exec(function (err, gotCallsData){
+      if(err) { return handleError(res, err); }
+      return res.json(200, gotCallsData);
+    })
+
+  }
+
 };
 
 
