@@ -20,5 +20,3 @@ router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.delete('/kiboengage/:id', auth.isAuthenticated(), controller.destroyKiboengage);
 
 module.exports = router;
-
-

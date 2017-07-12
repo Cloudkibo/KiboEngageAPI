@@ -30,7 +30,7 @@ exports.index = function(req, res) {
 
     })
   }
- 
+
 };
 
 // Get list of user's departments
@@ -45,13 +45,13 @@ exports.mydepartments = function(req, res){
     })
   }
   else if(req.user.isAdmin == 'Yes' ){
-   
+
     Department.find({companyid : req.user.uniqueid, createdby : req.user._id, deleteStatus: 'No'}, function(err, departments){
       if(err) { return handleError(res, err); }
      return res.json(200, departments);
     })
-    
-    
+
+
   } else if(req.user.isOwner == 'Yes'){
     user.findOne({email : req.user.ownerAs}, function(err, clientUser){
       if(clientUser == null) return res.json(200, []);
@@ -77,7 +77,7 @@ exports.mydepartmentsKiboEngage = function(req, res){
     })
   }
   else if(req.user.isAdmin == 'Yes' ){
-  
+
     Department.find({companyid : req.user.uniqueid, createdby : req.user._id, deleteStatus: 'No'}, function(err, departments){
       if(err) { return handleError(res, err); }
     deptagent.find({
@@ -87,11 +87,11 @@ exports.mydepartmentsKiboEngage = function(req, res){
       return res.json(200, {'createdDept' : departments,'agentDept' : agentdepartments});
     })
     })
-    
-    
-    
-    
-     
+
+
+
+
+
   } else if(req.user.isOwner == 'Yes'){
     user.findOne({email : req.user.ownerAs}, function(err, clientUser){
       if(clientUser == null) return res.json(200, []);
@@ -102,7 +102,6 @@ exports.mydepartmentsKiboEngage = function(req, res){
     })
   }
 };
-
 
 // Get a single department
 exports.show = function(req, res) {
@@ -124,7 +123,7 @@ exports.show = function(req, res) {
       return res.json(department);
     })
   }
- 
+
 };
 
 // Creates a new department in the DB.
@@ -418,7 +417,7 @@ function handleError(res, err) {
 // Creates a new department in the DB.
 exports.createKiboengage = function(req, res) {
   logger.serverLog('info', 'This is body in create group '+ JSON.stringify(req.body) );
-  
+
   user.findById(req.user._id, function (err, gotUser) {
     if (err) return console.log(err);
 
@@ -452,10 +451,10 @@ exports.createKiboengage = function(req, res) {
                     // create dept agents
                   if(req.body.teamagents){
                     logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(req.body.teamagents) );
-  
+
                     for(var team in req.body.teamagents){
                       logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(team) );
-  
+
                     var newteamagent = new deptteam({
                       deptid : record._id,
                       companyid : clientUser.uniqueid,
@@ -469,14 +468,14 @@ exports.createKiboengage = function(req, res) {
                     }
                   }
                     //create default message channel
-                    
+
                      var channel = new MessageChannel({
                        msg_channel_name : 'General',
                        msg_channel_description: 'This subgroup is for general discussions',
                        companyid : record.companyid,
                        groupid : record._id,
                        createdby : record.createdby
-                       
+
                      });
                      console.log(channel);
                      channel.save(function(err4,record2){
@@ -533,10 +532,10 @@ exports.createKiboengage = function(req, res) {
                      // create dept agents
                   if(req.body.teamagents){
                     logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(req.body.teamagents) );
-  
+
                     for(var team in req.body.teamagents){
                       logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(team) );
-  
+
                     var newteamagent = new deptteam({
                       deptid : record._id,
                       companyid : record.companyid,
@@ -546,9 +545,9 @@ exports.createKiboengage = function(req, res) {
                       newteamagent.save(function(err4){
                         if(err4) return console.log(err4)
                       })
-                      
 
-                 
+
+
 
                     }
                   }
@@ -558,14 +557,14 @@ exports.createKiboengage = function(req, res) {
                        companyid : record.companyid,
                        groupid : record._id,
                        createdby : record.createdby
-                       
+
                      });
                      console.log(channel);
                      channel.save(function(err4,record2){
                          if(err4) return console.log(err4);
                           Department.find({companyid : req.user.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err3, gotDepartmentsData){
                             if(err3) return console.log(err3);
-        
+
                             res.send({status: 'success', msg: gotDepartmentsData,group : record,subgroup : record2});
                           })
                      })
@@ -677,7 +676,7 @@ exports.destroyKiboengage = function(req, res) {
           })
 
         })
-      
+
 
     }
     else
@@ -692,7 +691,7 @@ exports.destroyKiboengage = function(req, res) {
 // Creates a new department in the DB.
 exports.createKiboengagefb = function(req, res) {
   logger.serverLog('info', 'This is body in createteam fb '+ JSON.stringify(req.body) );
-  
+
   user.findById(req.user._id, function (err, gotUser) {
     if (err) return console.log(err);
 
@@ -728,10 +727,10 @@ exports.createKiboengagefb = function(req, res) {
                     // create dept agents
                   if(req.body.deptagents){
                     logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
-  
+
                     for(var agent in req.body.deptagents){
                       logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
-  
+
                     var newdeptagent = new deptagent({
                       deptid : record._id,
                       companyid : clientUser.uniqueid,
@@ -744,8 +743,8 @@ exports.createKiboengagefb = function(req, res) {
 
                     }
                   }
-                    
-                    
+
+
                   })
 
 
@@ -791,10 +790,10 @@ exports.createKiboengagefb = function(req, res) {
                         // create dept agents
                   if(req.body.deptagents){
                     logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(req.body.deptagents) );
-  
+
                     for(var agent in req.body.deptagents){
                       logger.serverLog('info', 'Inside deptagents '+ JSON.stringify(agent) );
-  
+
                     var newdeptagent = new deptagent({
                       deptid : record._id,
                       companyid : record.companyid,
@@ -807,7 +806,7 @@ exports.createKiboengagefb = function(req, res) {
 
                     }
                   }
-                
+
                 })
 
 
@@ -827,4 +826,3 @@ exports.createKiboengagefb = function(req, res) {
       res.json(501, {});
   })
 };
-

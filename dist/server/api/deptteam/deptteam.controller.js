@@ -26,6 +26,28 @@ Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('dep
   });
 };
 
+exports.getallAgents = function(req, res) {
+  Deptteam.find({companyid : req.user.uniqueid, deptid: req.params.id, deleteStatus : 'No'}, function (err, deptteams) {
+      if(err) { return handleError(res, err); }
+      var teams = [];
+
+      for(var i in deptteams) {
+        teams.push(deptteams[i].teamid);
+      }
+
+      groupagent.find({groupid : {$in : teams}}).populate('agentid').exec(function(err3, agentsgroup){
+        if(err3) { return handleError(res, err3); }
+        var agents = [];
+
+        for(var i in agentsgroup){
+          agents.push(agentsgroup[i].agentid);
+        }
+        return res.json(200, agents);
+      })
+
+    });
+};
+
 // Get a single deptteam
 exports.show = function(req, res) {
 
@@ -40,7 +62,7 @@ exports.show = function(req, res) {
 
       })
     })
-  } else{ 
+  } else{
     Deptteam.find({companyid : req.user.uniqueid, deptid: req.params.id, deleteStatus : 'No'}).populate('deptid teamid').exec(function (err, deptteam){
 
       if(err) { return handleError(res, err); }
@@ -51,7 +73,7 @@ exports.show = function(req, res) {
   }
 
 
-  
+
 };
 
 // Creates a new deptteam in the DB.
