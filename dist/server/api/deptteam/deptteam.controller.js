@@ -30,8 +30,11 @@ Deptteam.find({companyid : req.user.uniqueid,deleteStatus : 'No'}).populate('dep
 exports.getallAgents = function(req, res) {
   Deptteam.find({companyid : req.user.uniqueid, deptid: req.params.id, deleteStatus : 'No'}, function (err, deptteams) {
       if(err) { return handleError(res, err); }
-      logger.serverLog('info', 'going to get all the agents route for a department');
-      console.log('going to get all the agents route for a department');
+
+      logger.serverLog('info', 'going to get all the teams route for a department');
+      console.log('going to get all the teams route for a department');
+
+      console.log(req.params);
 
       logger.serverLog('info', deptteams);
       console.log(deptteams);
