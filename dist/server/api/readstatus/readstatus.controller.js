@@ -29,6 +29,10 @@ exports.index = function(req, res) {
 }
 
 exports.create = function(req, res) {
+  logger.serverLog('info', 'create readstatus api called with body');
+  logger.serverLog('info', req.body);
+  console.log('create readstatus api called with body')
+  console.log(req.body);
   if(req.body.request_id.indexOf('$') > -1){
     fbpageteam.find({companyid : req.body.company_id, pageid: req.body.group_id, deleteStatus : 'No'}, function (err, deptteams) {
         if(err) { return handleError(res, err); }
