@@ -43,6 +43,8 @@ module.exports = function(app) {
   app.use('/api/notifications', require('./api/notifications'));
   app.use('/api/news', require('./api/news'));
 
+  app.use('/api/readstatus', require('./api/readstatus'))
+
   app.use('/auth', require('./auth'));
 
 
