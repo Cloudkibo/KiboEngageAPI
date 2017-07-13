@@ -19,7 +19,7 @@ exports.index = function(req, res) {
     },
     {
       $group : {
-        _id : { request_id : "$request_id" },
+        request_id : "$request_id",
         count: { $sum: 1 }
       }
     }, function (err, gotCallsData){
