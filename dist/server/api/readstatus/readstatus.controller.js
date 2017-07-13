@@ -29,7 +29,7 @@ exports.index = function(req, res) {
 }
 
 exports.create = function(req, res) {
-  if(req.body.requst_id.indexOf('$') > -1){
+  if(req.body.request_id.indexOf('$') > -1){
     fbpageteam.find({companyid : req.body.company_id, pageid: req.body.group_id, deleteStatus : 'No'}, function (err, deptteams) {
         if(err) { return handleError(res, err); }
 
