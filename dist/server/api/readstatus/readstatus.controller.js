@@ -19,7 +19,7 @@ exports.index = function(req, res) {
     },
     {
       $group : {
-        request_id : "$request_id",
+        _id : { request_id : "$request_id" },
         count: { $sum: 1 }
       }
     }, function (err, gotCallsData){
@@ -64,18 +64,32 @@ exports.create = function(req, res) {
           logger.serverLog('info', agentsgroup);
           console.log(agentsgroup);
 
+          var agents = [];
+
           for(var i in agentsgroup){
             if(agentsgroup[i].agentid.isDeleted === 'No'){
               var selectedAgent = agentsgroup[i].agentid;
-              var readstatusPayload = {
-                company_id : req.body.company_id,
-                request_id : req.body.request_id,
-                message_id : req.body.message_id,
-                agent_id : selectedAgent._id
+              var payload = {
+                email : selectedAgent.email,
+                _id : selectedAgent._id,
+                firstname: selectedAgent.firstname,
+                lastname: selectedAgent.lastname
               };
-              readstatus.create(readstatusPayload, function(err, record){
-              });
+              agents.push(payload);
             }
+          }
+
+          agents = _.uniq(agents, 'email');
+
+          for(var i in agents){
+            var readstatusPayload = {
+              company_id : req.body.company_id,
+              request_id : req.body.request_id,
+              message_id : req.body.message_id,
+              agent_id : agents[i]._id
+            };
+            readstatus.create(readstatusPayload, function(err, record){
+            });
           }
           return res.json(200, {status: 'success'});
         })
@@ -111,18 +125,32 @@ exports.create = function(req, res) {
           logger.serverLog('info', agentsgroup);
           console.log(agentsgroup);
 
+          var agents = [];
+
           for(var i in agentsgroup){
             if(agentsgroup[i].agentid.isDeleted === 'No'){
               var selectedAgent = agentsgroup[i].agentid;
-              var readstatusPayload = {
-                company_id : req.body.company_id,
-                request_id : req.body.request_id,
-                message_id : req.body.message_id,
-                agent_id : selectedAgent._id
+              var payload = {
+                email : selectedAgent.email,
+                _id : selectedAgent._id,
+                firstname: selectedAgent.firstname,
+                lastname: selectedAgent.lastname
               };
-              readstatus.create(readstatusPayload, function(err, record){
-              });
+              agents.push(payload);
             }
+          }
+
+          agents = _.uniq(agents, 'email');
+
+          for(var i in agents){
+            var readstatusPayload = {
+              company_id : req.body.company_id,
+              request_id : req.body.request_id,
+              message_id : req.body.message_id,
+              agent_id : agents[i]._id
+            };
+            readstatus.create(readstatusPayload, function(err, record){
+            });
           }
           return res.json(200, {status: 'success'});
         })
@@ -130,3 +158,7 @@ exports.create = function(req, res) {
   }
 
 };
+
+function handleError(res, err) {
+  return res.send(500, err);
+}
