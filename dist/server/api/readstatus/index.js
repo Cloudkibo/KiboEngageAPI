@@ -9,7 +9,7 @@ var router = express.Router();
 
 router.post('/getunreadsessionscount', auth.isAuthenticated(), controller.index);
 router.post('/', auth.isAuthenticated(), controller.create);
-router.post('/deleteforagent', auth.isAuthenticated(), controller.deleteforagent
+router.post('/deleteforagent', auth.isAuthenticated(), controller.deleteforagent);
 router.post('/deleteforsession', auth.isAuthenticated(), controller.deleteforsession);
 
 module.exports = router;
