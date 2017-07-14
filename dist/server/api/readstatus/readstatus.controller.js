@@ -163,14 +163,14 @@ exports.deleteforagent = function(req, res) {
   readstatus.remove({message_id: req.body.message_id, request_id: req.body.request_id,
   agent_id: req.body.agent_id}, function (err) {
     if(err) { return handleError(res, err); }
-    return res.json(204, {status, 'success'});
+    return res.json(204, {status: 'success'});
   });
 }
 
 exports.deleteforsession = function(req, res) {
   readstatus.remove({request_id: req.body.request_id}, function (err) {
     if(err) { return handleError(res, err); }
-    return res.json(204, {status, 'success'});
+    return res.json(204, {status: 'success'});
   });
 }
 
