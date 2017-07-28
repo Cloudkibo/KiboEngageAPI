@@ -198,7 +198,7 @@ exports.update = function(req, res) {
 
     if(req.user.isOwner == 'Yes'){
       user.findOne({email : req.user.ownerAs}, function(err, clientUser){
-    
+
             Group.findById(req.body.group._id, function(err1, gotGroup){
               if(err1) return console.log(err1)
 
@@ -234,8 +234,8 @@ exports.update = function(req, res) {
 
             });
 
-          
-        
+
+
       })
     }
     else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes'){
@@ -274,9 +274,9 @@ exports.update = function(req, res) {
 
             })
 
-         
 
-        
+
+
       })
     }
     else
@@ -402,7 +402,7 @@ exports.deleteteams = function(req, res) {
     }
     else if(gotUser.isAdmin == 'Yes'){
       res.send({status: 'success', msg: req.body.ids});
-      req.body.ids.forEach(funcion(itemId){
+      req.body.ids.forEach(function(itemId){
         Group.findById(itemId, function(err, gotGroup){
           if(err) return console.log(err);
 
