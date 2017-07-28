@@ -8,7 +8,7 @@ var router = express.Router();
 
 router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/kiboengagesessions', auth.isAuthenticated(), controller.index2);
-router.get('/mobilesessions', auth.isAuthenticated(), controller.index2);
+router.get('/mobilesessions', auth.isAuthenticated(), controller.mobilesessions);
 router.get('/waitingcalls', auth.isAuthenticated(), controller.waitingcalls);
 router.get('/abandonedcalls', auth.isAuthenticated(), controller.abandonedcalls);
 router.get('/mypickedcalls', auth.isAuthenticated(), controller.mypickedcalls);

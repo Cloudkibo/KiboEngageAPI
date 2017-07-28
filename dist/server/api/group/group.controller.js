@@ -198,11 +198,7 @@ exports.update = function(req, res) {
 
     if(req.user.isOwner == 'Yes'){
       user.findOne({email : req.user.ownerAs}, function(err, clientUser){
-        Group.count({deptname : req.body.group.groupname, companyid : clientUser.uniqueid, _id : {$ne : req.body.group._id}}, function(err, gotCount){
-          if(gotCount > 0){
-            res.send({status:'danger', msg:'Group with the given name already exists'})
-          } else {
-
+    
             Group.findById(req.body.group._id, function(err1, gotGroup){
               if(err1) return console.log(err1)
 
@@ -238,16 +234,11 @@ exports.update = function(req, res) {
 
             });
 
-          }
-        })
+          
+        
       })
     }
     else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes'){
-
-      Group.count({groupname : req.body.group.groupname, companyid : req.user.uniqueid, _id : {$ne : req.body.group._id}}, function(err, gotCount){
-        if(gotCount > 0){
-          res.send({status:'danger', msg:'Group with the given name already exists'})
-        } else {
 
           Group.findById(req.body.group._id, function(err1, gotGroup){
             if(err1) return console.log(err1)
@@ -283,9 +274,9 @@ exports.update = function(req, res) {
 
             })
 
-          });
+         
 
-        }
+        
       })
     }
     else
