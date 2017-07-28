@@ -57,7 +57,7 @@ exports.allagents = function(req, res) {
 
     User.find({uniqueid : req.user.uniqueid, isDeleted : 'No'}, function(err3, gotAgents){
       if (!err3) {
-        res.json(200, {agents:gotAgents}); 
+        res.json(200, {agents:gotAgents});
       }
   else
     res.json(501, {});
@@ -379,7 +379,6 @@ exports.deleteagent = function(req, res) {
           gotAgent.save(function(err){
             if(err) return console.log(err);
 
-        
           deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
             {deleteStatus : 'Yes'}, {multi : true}, function(err){
               if(err) return console.log(err);
@@ -394,21 +393,10 @@ exports.deleteagent = function(req, res) {
                                     res.send({status: 'success', msg: gotAgents});
 
                                   })
-
-
                                 })
                 //res.send({status: 'success', msg: gotAgents});
-
-              
-
-
             })
-
-
-
           })
-
-
         })
       })
     }
@@ -440,21 +428,90 @@ exports.deleteagent = function(req, res) {
                                     res.send({status: 'success', msg: gotAgents});
 
                                   })
-
-
                                 })
                 //res.send({status: 'success', msg: gotAgents});
-
-              
-
-
             })
+        })
+      })
+    }
+    else
+      res.json(501, {});
+  })
+};
 
+exports.deleteagents = function(req, res) {
+  User.findById(req.user._id, function (err, gotUser) {
+    if (err) return console.log(err);
+
+    if (req.user.isOwner == 'Yes') {
+      User.findOne({email : req.user.ownerAs}, function(err, clientUser){
+        res.send({status: 'success', msg: req.body.ids});
+        req.body.ids.forEach(function (agentId) {
+          User.findById(agentId, function(err, gotAgent){
+            if(err) return console.log(err);
+
+            var today = new Date();
+            var agentDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+            gotAgent.isDeleted = 'Yes';
+            gotAgent.email = 'deleted '+ agentDeleteDate+ ' '+ gotAgent.email;
+
+            gotAgent.save(function(err){
+              if(err) return console.log(err);
+
+            deptagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+              {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                if(err) return console.log(err);
+
+                    groupagent.update({agentid : gotAgent._id, companyid : clientUser.uniqueid},
+                                  {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                    if(err) return console.log(err2);
+
+                                    User.find({uniqueid : clientUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                      if(err) return console.log(err3);
+                                    })
+                                  })
+                  //res.send({status: 'success', msg: gotAgents});
+              })
+            })
+          })
+
+        });
+      })
+    }
+    else if(gotUser.isAdmin == 'Yes'){
+      res.send({status: 'success', msg: req.body.ids});
+      req.body.ids.forEach(function (agentId) {
+        User.findById(agentId, function(err, gotAgent){
+          if(err) return console.log(err);
+
+          var today = new Date();
+          var agentDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+          gotAgent.isDeleted = 'Yes';
+          gotAgent.email = 'deleted '+ agentDeleteDate+ ' '+ gotAgent.email;
+
+          gotAgent.save(function(err){
+            if(err) return console.log(err);
+
+            deptagent.update({agentid : gotAgent._id, companyid : gotUser.uniqueid},
+              {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                if(err) return console.log(err);
+
+                    groupagent.update({agentid : gotAgent._id, companyid : gotUser.uniqueid},
+                                  {deleteStatus : 'Yes'}, {multi : true}, function(err2){
+                                    if(err) return console.log(err2);
+
+                                    User.find({uniqueid : gotUser.uniqueid, isDeleted: 'No'}, function(err3,gotAgents){
+                                      if(err) return console.log(err3);
+                                    })
+                                  })
+                  //res.send({status: 'success', msg: gotAgents});
+              })
+          })
         })
 
-
-      })
-
+      });
     }
     else
       res.json(501, {});

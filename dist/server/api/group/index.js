@@ -14,7 +14,6 @@ router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
+router.post('/deleteteams', auth.isAuthenticated(), controller.deleteteams);
 
 module.exports = router;
-
-

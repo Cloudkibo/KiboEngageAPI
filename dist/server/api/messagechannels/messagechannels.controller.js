@@ -87,6 +87,35 @@ exports.destroy = function(req, res) {
   });
 };
 
+exports.deletesubgroups = function(req, res) {
+  req.body.ids.forEach(function(itemId){
+    res.send(204);
+    MessageChannel.findById(itemId, function (err, messagechannel) {
+      if(err) { return handleError(res, err); }
+      if(!messagechannel) { return res.send(404); }
+            var today = new Date();
+            var deptDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+            messagechannel.deleteStatus = 'Yes';
+            messagechannel.msg_channel_name = 'deleted '+deptDeleteDate +' '+messagechannel.msg_channel_name;
+
+            messagechannel.save(function(err){
+              if(err) return console.log(err);
+              Sessions.update({messagechannel : {"$in" : [messagechannel._id]}, companyid : req.user.uniqueid},
+                                          {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                                                    if(err) return console.log(err);
+
+            })
+
+              })
+
+
+    });
+
+  })
+
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

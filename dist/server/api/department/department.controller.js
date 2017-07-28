@@ -685,6 +685,103 @@ exports.destroyKiboengage = function(req, res) {
 };
 
 
+exports.deletedepts = function(req, res) {
+  user.findById(req.user._id, function (err, gotUser) {
+    if (err) return console.log(err);
+
+    if(req.user.isOwner == 'Yes'){
+      user.findOne({email : req.user.ownerAs}, function(err, clientUser){
+        res.send({status: 'success', msg: req.body.ids});
+        req.body.ids.forEach(function(itemId){
+          Department.findById(itemId, function(err, gotDepartment){
+            if(err) return console.log(err);
+
+            var today = new Date();
+            var deptDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+            gotDepartment.deleteStatus = 'Yes';
+            gotDepartment.deptname = 'deleted '+deptDeleteDate +' '+gotDepartment.deptname;
+            gotDepartment.deptCapital = 'deleted '+deptDeleteDate +' '+ gotDepartment.deptCapital
+
+            gotDepartment.save(function(err){
+              if(err) return console.log(err);
+
+              deptteam.update({deptid : gotDepartment._id, companyid : clientUser.uniqueid},
+                {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                  if(err) return console.log(err);
+
+                  MessageChannel.update({groupid : gotDepartment._id, companyid : clientUser.uniqueid},
+                         {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                                if(err) return console.log(err);
+                                 Sessions.update({departmentid : gotDepartment._id, companyid : clientUser.uniqueid},
+                                          {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                                                    if(err) return console.log(err);
+                                                    Department.find({companyid : clientUser.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err, gotDepartmentsData){
+
+                                                    })
+
+                })
+              })
+                  })
+
+
+            })
+
+
+          })
+
+        });
+      })
+    }
+    else if(gotUser.isAdmin == 'Yes'){
+
+      res.send({status: 'success', msg: req.body.ids});
+      req.body.ids.forEach(function(itemId){
+        Department.findById(itemId, function(err, gotDepartment){
+          if(err) return console.log(err);
+
+          var today = new Date();
+          var deptDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+          gotDepartment.deleteStatus = 'Yes';
+          gotDepartment.deptname = 'deleted '+deptDeleteDate +' '+gotDepartment.deptname;
+          gotDepartment.deptCapital = 'deleted '+deptDeleteDate +' '+ gotDepartment.deptCapital
+
+          gotDepartment.save(function(err){
+            if(err) return console.log(err);
+
+            deptteam.update({deptid : gotDepartment._id, companyid : gotUser.uniqueid},
+              {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                if(err) return console.log(err);
+
+                  MessageChannel.update({groupid : gotDepartment._id, companyid : gotUser.uniqueid},
+                         {deleteStatus : 'Yes',msg_channel_name : 'deleted -' + gotDepartment.deptname}, {multi : true}, function(err){
+                                if(err) return console.log(err);
+                                 Sessions.update({departmentid : gotDepartment._id, companyid : gotUser.uniqueid},
+                                          {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                                                    if(err) return console.log(err);
+                                                    Department.find({companyid : gotUser.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err, gotDepartmentsData){
+
+                                                    })
+                                                  })
+              })
+                  })
+
+
+            })
+
+          })
+
+
+      });
+
+    }
+    else
+      res.json(501, {});
+  })
+};
+
+
 /// *** Create team for Fb messages
 
 

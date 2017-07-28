@@ -11,7 +11,7 @@ var groupagent = require('../groupagent/groupagent.model');
 // Get list of facebook pages
 exports.index = function(req, res) {
   logger.serverLog('info', 'Fetch fbpages');
- 
+
   fbpages.find({companyid : req.user.uniqueid}, function (err, pages) {
     if(err) { return handleError(res, err); }
     return res.json(200, pages);
@@ -40,10 +40,10 @@ exports.create = function(req, res) {
                 // create dept agents
                   if(req.body.teamagents){
                     logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(req.body.teamagents) );
-  
+
                     for(var team in req.body.teamagents){
                       logger.serverLog('info', 'Inside teamagents '+ JSON.stringify(team) );
-  
+
                     var newteamagent = new FbPageteam({
                       pageid : page._id,
                       companyid : req.user.uniqueid,
@@ -62,7 +62,7 @@ exports.create = function(req, res) {
 
         }
       })
-  
+
 };
 
 // Get a companyid from pageid
@@ -91,7 +91,7 @@ exports.showfbpage = function(req, res) {
           return res.json(200, {teamagents:teamagents,fbpageteams:fbpageteams,page:page});
            });
   });
-  
+
   });
 };
 
@@ -100,7 +100,7 @@ exports.showfbpage = function(req, res) {
 // Updates an existing facebook page info in the DB.
 exports.update = function(req, res) {
   logger.serverLog('info', 'Inside Edit fbpage '+ JSON.stringify(req.body) );
-  
+
   if(req.body.fbpage.pageid) { delete req.body.fbpage.pageid; }
   fbpages.findOne({pageid : req.params.id}, function (err, page) {
     if (err) { return handleError(res, err); }
@@ -113,7 +113,7 @@ exports.update = function(req, res) {
                 FbPageteam.remove({pageid : req.body.fbpage._id}, function(err3){
                   if(err3) return console.log(err3)
                   if(req.body.teamagents)
-                  {  
+                  {
                       for(var team in req.body.teamagents){
 
                         var newteamagent = new FbPageteam({
@@ -130,7 +130,7 @@ exports.update = function(req, res) {
                 }
                   return res.json(200, page);
                 });
-      
+
     });
   });
 };
@@ -148,6 +148,25 @@ exports.destroy = function(req, res) {
               if(err) return console.log(err);
                return res.send(204);
              });
+    });
+  });
+};
+
+exports.deletefbpages = function(req, res) {
+  res.send(204);
+  req.body.ids.forEach(function(itemId){
+    fbpages.findOne({pageid : itemId}, function (err, fbpage) {
+      if(err) { return handleError(res, err); }
+      if(!fbpage) { return res.send(404); }
+      fbpage.remove(function(err) {
+        if(err) { return handleError(res, err); }
+
+          FbPageteam.update({pageid : fbpage._id, companyid : fbpage.companyid},
+              {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                if(err) return console.log(err);
+
+               });
+      });
     });
   });
 };

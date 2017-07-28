@@ -18,5 +18,6 @@ router.post('/kiboengagefb',auth.isAuthenticated(),controller.createKiboengagefb
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.delete('/kiboengage/:id', auth.isAuthenticated(), controller.destroyKiboengage);
+router.post('/deletedepts',auth.isAuthenticated(),controller.deletedepts);
 
 module.exports = router;

@@ -67,7 +67,7 @@ exports.mygroups = function(req, res){
     })
   }
   else if(req.user.isAdmin == 'Yes' ){
-  
+
     Group.find({companyid : req.user.uniqueid, createdby : req.user._id, deleteStatus: 'No'}, function(err, groups){
       if(err) { return handleError(res, err); }
     groupagent.find({
@@ -77,11 +77,11 @@ exports.mygroups = function(req, res){
       return res.json(200, {'createdDept' : groups,'agentDept' : agentgroups});
     })
     })
-    
-    
-    
-    
-     
+
+
+
+
+
   } else if(req.user.isOwner == 'Yes'){
     user.findOne({email : req.user.ownerAs}, function(err, clientUser){
       if(clientUser == null) return res.json(200, []);
@@ -114,8 +114,8 @@ exports.show = function(req, res) {
       return res.json(group);
     })
   }
-  
-  
+
+
 };
 
 // Creates a new group in the DB.
@@ -166,7 +166,7 @@ exports.create = function(req, res) {
         });
 
 
-      
+
 
       Group.count({groupname : req.body.groupname, companyid : req.user.uniqueid}, function(err, gotCount){
 
@@ -309,7 +309,7 @@ exports.destroy = function(req, res) {
 
           gotGroup.deleteStatus = 'Yes';
           gotGroup.groupname = 'deleted '+deptDeleteDate +' '+gotGroup.groupname;
-       
+
           gotGroup.save(function(err){
             if(err) return console.log(err);
 
@@ -342,7 +342,7 @@ exports.destroy = function(req, res) {
 
         gotGroup.deleteStatus = 'Yes';
         gotGroup.groupname = 'deleted '+deptDeleteDate +' '+gotGroup.groupname;
-    
+
         gotGroup.save(function(err){
           if(err) return console.log(err);
 
@@ -370,6 +370,78 @@ exports.destroy = function(req, res) {
   })
 };
 
+exports.deleteteams = function(req, res) {
+  user.findById(req.user._id, function (err, gotUser) {
+    if (err) return console.log(err);
+
+    if(req.user.isOwner == 'Yes'){
+      user.findOne({email : req.user.ownerAs}, function(err, clientUser){
+        res.send({status: 'success', msg: req.body.ids});
+        req.body.ids.forEach(function(itemId){
+          Group.findById(req.params.id, function(err, gotGroup){
+            if(err) return console.log(err);
+
+            var today = new Date();
+            var deptDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+            gotGroup.deleteStatus = 'Yes';
+            gotGroup.groupname = 'deleted '+deptDeleteDate +' '+gotGroup.groupname;
+
+            gotGroup.save(function(err){
+              if(err) return console.log(err);
+
+              groupagent.update({groupid : gotGroup._id, companyid : clientUser.uniqueid},
+                {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                  if(err) return console.log(err);
+
+                  Group.find({companyid : clientUser.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err, gotGroupsData){
+
+                  })
+
+
+                })
+
+            })
+
+
+          })
+
+        });
+      })
+    }
+    else if(gotUser.isAdmin == 'Yes'){
+      res.send({status: 'success', msg: req.body.ids});
+      req.body.ids.forEach(funcion(itemId){
+        Group.findById(itemId, function(err, gotGroup){
+          if(err) return console.log(err);
+
+          var today = new Date();
+          var deptDeleteDate = today.getFullYear() + '' + (today.getMonth()+1) + '' + today.getDate() + '' + today.getHours() + '' + today.getMinutes() + '' + today.getSeconds();
+
+          gotGroup.deleteStatus = 'Yes';
+          gotGroup.groupname = 'deleted '+deptDeleteDate +' '+gotGroup.groupname;
+
+          gotGroup.save(function(err){
+            if(err) return console.log(err);
+
+            groupagent.update({groupid : gotGroup._id, companyid : gotUser.uniqueid},
+              {deleteStatus : 'Yes'}, {multi : true}, function(err){
+                if(err) return console.log(err);
+
+                Group.find({companyid : req.user.uniqueid, deleteStatus : 'No'}).populate('createdby').exec(function (err, gotGroupsData){
+
+                })
+
+              })
+          })
+        })
+      });
+    }
+    else
+      res.json(501, {});
+  })
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }
@@ -385,7 +457,7 @@ exports.join = function(req, res) {
 
     if(req.user.isOwner == 'Yes'){
       user.findOne({email : req.user.ownerAs}, function(err, clientUser){
-      
+
             Group.findById(req.body.groupid, function(err1, gotGroup){
               if(err1) return console.log(err1)
 
@@ -409,7 +481,7 @@ exports.join = function(req, res) {
     }
     else if(gotUser.isAdmin == 'Yes' || gotUser.isSupervisor == 'Yes' || gotUser.isAgent == 'Yes' ){
 
-     
+
           Group.findById(req.body.groupid, function(err1, gotGroup){
             if(err1) return console.log(err1)
             var newgroupagent = new groupagent({
@@ -422,14 +494,14 @@ exports.join = function(req, res) {
                     if(err4) return console.log(err4)
                   })
 
-                
+
 
                 res.send({status:'success', msg:'You have joined group successfully'})
 
               })
 
-          
-      
+
+
     }
     else
       res.json(501, {});

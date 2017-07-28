@@ -26,6 +26,7 @@ router.post('/setdefaultcompletedemail1', auth.isAuthenticated(), controller.set
 router.post('/setdefaultcompletedemail2', auth.isAuthenticated(), controller.setdefaultcompletedemail2);
 router.post('/setdefaultcompletedemail3', auth.isAuthenticated(), controller.setdefaultcompletedemail3);
 router.post('/deleteagent/:id', auth.isAuthenticated(), controller.deleteagent);
+router.post('/deleteagents', auth.isAuthenticated(), controller.deleteagents);
 router.post('/updaterole', auth.isAuthenticated(), controller.updaterole);
 router.post('/updateprofile', auth.isAuthenticated(), controller.updateprofile);
 router.post('/updateprofilepicture', auth.isAuthenticated(), controller.updateprofilepicture);
